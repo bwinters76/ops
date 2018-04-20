@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% block app_content %}
+
+{% if pvtflip == True  %}
+  <h3> Private Web </h3>
+  <hr>
+  Bound To:
+  <span id="privateweb">
+    {{ pvtweb }}
+  </span>
+  <img src="{{ url_for('static', filename='loading.gif') }}">
+  <form class="form form-horizontal" method="post" role="form">
+    <button class="btn btn-primary" id="pvtbtn" type="button" onclick="flip(pvtbtn,privateweb)">Flip Private Web</button>
+  </form>
+{% endif %}
+
+{% if pubflip == True  %}
+  <h3> Public Web </h3>
+  <hr>
+  Bound To:
+  <span id="publicweb">
+    {{ pubweb }}
+  </span>
+  <img src="{{ url_for('static', filename='loading.gif') }}">
+  <form class="form form-horizontal" method="post" role="form">
+    <button class="btn btn-primary" id="pubbtn" type="button" onclick="flip(pubbtn,publicweb)">Flip Public Web</button>
+  </form>
+{% endif %}
+
+{% if betaflip == True  %}
+  <h3> Beta Web </h3>
+  <hr>
+  Bound To:
+  <span id="betaweb">
+    {{ betaweb }}
+  </span>
+  <form class="form form-horizontal" method="post" role="form">
+    <button class="btn btn-primary" id="betabtn" type="button" onclick="flip(betabtn,betaweb)">Flip Beta Web</button>
+  </form>
+{% endif %}
+
+<script>
+     function flip(sourceElem, destElem) {
+         $(destElem).html('<img src="static/loading.gif">');
+         $.post('/flip', {
+             text: $(sourceElem).id(),
+         }).done(function(response) {
+             $(destElem).text(response['text'])
+         }).fail(function() {
+             $(destElem).text("Error: Could not contact server.");
+         });
+     }
+ </script>
+
+
+{% endblock %}

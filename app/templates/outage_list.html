@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+  <h1>Outages reported</h1>
+  <hr>
+  {% for service in services %}
+    <h2> {{ service }} </h2>
+    <ul>
+      {% for incident in outages %}
+        {% if incident.oservice == service %}
+        <li> {{ incident.oservice }} on {{ incident.odate }} {{ incident.ohour }}:{{ incident.ominute }} {{ incident.oampm }} - was {{ incident.ocategory }} for {{ incident.olength }} minutes - {{ incident.oreason }} </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+    <br>
+  {% endfor %}
+{% endblock %}

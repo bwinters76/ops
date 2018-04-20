@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+{% if Month %}
+  <h1>{{ Month }} - Uptime Report</h1>
+  <hr>
+  <h2>Private Web:</h2>
+  <p><strong>Uptime - {{ PrivateUpTime['mtd'] }}%</strong></p>
+  {% if PrivateList %}
+    <ul>
+      {% for each in PrivateList %}
+        <li>On {{ each['date'] }} at {{ each['time'] }} for {{ each['length'] }} minutes - {{each['reason']}} </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+  <hr>
+  <h2>Public Web:</h2>
+  <p><strong>Uptime - {{ PublicUpTime['mtd'] }}%</strong></p>
+  {% if PublicList %}
+    <ul>
+      {% for each in PublicList %}
+        <li>On {{ each['date'] }} at {{ each['time'] }} for {{ each['length'] }} minutes - {{each['reason']}} </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+  <hr>
+  <h2>Email:</h2>
+  <p><strong>Uptime - {{ EmailUpTime['mtd'] }}%</strong></p>
+  {% if EmailList %}
+    <ul>
+      {% for each in EmailList %}
+        <li>On {{ each['date'] }} at {{ each['time'] }} for {{ each['length'] }} minutes - {{each['reason']}} </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% else %}
+  <h1>Uptime Report</h1>
+  <hr>
+  <div class="row">
+    <div class="col-md-4">
+      {{ wtf.quick_form(form) }}
+    </div>
+  </div>
+
+
+{% endif %}
+
+
+{% endblock %}

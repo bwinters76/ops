@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% block app_content %}
+  <h2> {{netscaler}} Management </h2>
+  <hr>
+  <p>You are: {{user}}</p>
+  <p>Select an option:</p>
+  <h3>Current Bindings:</h3>
+  {% if bindings %}
+  <ul>
+  {% for binding in bindings %}
+    {% if binding['vs'] == 'pvt_http' %}
+      <li>Private Web HTTP is bound to Side {{ binding['svcg'] }}</li>
+    {% endif %}
+    {% if binding['vs'] == 'pvt_api'%}
+      <li>Private Web API is bound to Side {{ binding['svcg'] }}</li>
+    {% endif %}
+    {% if binding['vs'] == 'pub_api' %}
+      <li> Public Web is bound to Side {{ binding['svcg'] }}</li>
+    {% endif %}
+    {% if binding['vs'] == 'beta_api' %}
+      <li> Beta Web is bound to Side {{ binding['svcg'] }}</li>
+    {% endif %}
+  {% endfor %}
+  </ul>
+  {% endif %}
+  <form action="" method="POST">
+    {{ form.hidden_tag() }}
+    <p>
+      {{ form.enablepvtflip.label }}
+      {{ form.enablepvtflip() }}<br>
+      {{ form.enablepubflip.label }}
+      {{ form.enablepubflip() }}<br>
+      {{ form.enablebetaflip.label }}
+      {{ form.enablebetaflip() }}<br>
+    </p>
+    <p>{{ form.submit() }}</p>
+  </form>
+
+
+{% endblock %}

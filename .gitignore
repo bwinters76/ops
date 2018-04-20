@@ -1,0 +1,7 @@
+# Untracked files:
+config.py
+app/__pycache__
+app/logs
+app/Include
+app/Lib
+app/Scripts

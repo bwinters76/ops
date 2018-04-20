@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block content %}
+  <h1>Add Outage Incident</h1>
+  <form action="" method="POST">
+    {{ form.hidden_tag() }}
+    <p>
+      {{ form.servicename.label }}<br>
+      {{ form.servicename() }}
+      {% for error in form.servicename.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+      {% endfor %}
+    </p>
+    <p>
+      {{ form.outagecategory.label }}<br>
+      {{ form.outagecategory() }}
+      {% for error in form.outagecategory.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+      {% endfor %}
+    </p>
+    <p>
+      {{ form.outagedate.label }}<br>
+      {{ form.outagedate() }} -
+      {{ form.outagestart.label }} {{ form.outagestart() }}
+      {% for error in form.outagedate.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+      {% endfor %}
+    </p>
+    <p>
+      {{ form.outagelength.label }}<br>
+      {{ form.outagelength() }}
+      {% for error in form.outagelength.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+      {% endfor %}
+    </p>
+    <p>
+      {{ form.outagereason.label }}<br>
+      {{ form.outagereason(size=240) }}
+      {% for error in form.outagereason.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+      {% endfor %}
+    </p>
+    <p>
+      {{ form.submit() }}<br>
+    </p>
+  </form>
+{% endblock %}

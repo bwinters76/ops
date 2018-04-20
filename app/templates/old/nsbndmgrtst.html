@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% block app_content %}
+
+{% if pvtflip == True  %}
+  <h3> Private Web </h3>
+  <hr>
+  Bound To:
+  <span id="privateweb">
+    {{ pvtweb }}
+  </span>
+  <img src="{{ url_for('static', filename='loading.gif') }}">
+  <form class="form form-horizontal" method="post" role="form">
+    <button class="btn btn-primary" id="pvtbtn" type="button" onclick="flip(pvtbtn,privateweb)">Flip Private Web</button>
+  </form>
+{% endif %}
+
+{% if pubflip == True  %}
+<div class="card" style="width: 18rem;">
+  <span id="publicwebimg">
+    {% if pubweb == 'A' %}
+    <img class="card-img-top" src="{{ url_for('static', filename='A.png') }}" alt="Card image cap">
+    {% endif %}
+    {% if pubweb == 'B' %}
+    <img class="card-img-top" src="{{ url_for('static', filename='B.png') }}" alt="Card image cap">
+    {% endif %}
+  </span>
+  <div class="card-body">
+    <h5 class="card-title">Public Web</h5>
+    <p class="card-text" id="publicweb"></p>
+  <form class="form form-horizontal" method="post" role="form">
+    <button class="btn btn-primary" id="pubbtn" onclick="flip(pubbtn,publicwebimg,publicweb)">Flip Public Web</button>
+  </form>
+  </div>
+</div>
+{% endif %}
+
+{% if betaflip == True  %}
+<div class="card" style="width: 18rem;">
+  <span id="betawebimg">
+    {% if pubweb == 'A' %}
+    <img class="card-img-top" src="{{ url_for('static', filename='A.png') }}" alt="Card image cap">
+    {% endif %}
+    {% if pubweb == 'B' %}
+    <img class="card-img-top" src="{{ url_for('static', filename='B.png') }}" alt="Card image cap">
+    {% endif %}
+  </span>
+  <div class="card-body">
+    <h5 class="card-title">Beta Web</h5>
+    <p class="card-text" id="betaweb"> . </p>
+  <form class="form form-horizontal" method="post" role="form">
+    <button class="btn btn-primary" id="betabtn" onclick="flip(betabtn,betawebimg,betaweb)">Flip Beta Web</button>
+  </form>
+  </div>
+</div>
+{% endif %}
+
+<script>
+     function flip(sourceElem, destElemImg, destElem) {
+         $(destElem).html('<img src="static/loading.gif">');
+         $.post('/flip', {
+             text: $(sourceElem).text(),
+         }).done(function(response) {
+             $(destElem).text(response['text'])
+             if (response['svcg'] = "A") {
+               $(destElemImg).html('<img class="card-img-top" src="static/A.png") }}" alt="Card image cap">')
+             } else {$(destElemImg).html('<img class="card-img-top" src="static/B.png") }}" alt="Card image cap">')}
+         }).fail(function() {
+             $(destElem).text("Error: Could not contact server.");
+         });
+     }
+ </script>
+
+
+{% endblock %}
