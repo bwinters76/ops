@@ -1,61 +1,72 @@
 {% extends "base.html" %}
 {% import 'bootstrap/wtf.html' as wtf %}
 {% block app_content %}
-
+<div class="row">
 {% if pvtflip == True  %}
-  <h3> Private Web </h3>
-  <hr>
-  Bound To:
-  <span id="privateweb">
-    {{ pvtweb }}
-  </span>
-  <form class="form form-horizontal" method="post" role="form">
-    <button class="btn btn-primary" id="pvtbtn" type="button" onclick="flip(pvtbtn,privateweb)">Flip Private Web</button>
-  </form>
+<div class="col-sm">
+  <div class="card w-75" style="max-width: 10rem;">
+    <div class="card-body">
+        <h3 class="card-title">Private Web</h3>
+        <span id="privatewebimg">
+          {% if pvtweb == 'A' %}
+            <img class="card-img-top" src="{{ url_for('static', filename='A.png') }}" alt="Card image cap">
+          {% endif %}
+          {% if pvtweb == 'B' %}
+            <img class="card-img-top" src="{{ url_for('static', filename='B.png') }}" alt="Card image cap">
+          {% endif %}
+        </span>
+        <h6 id="privateweb" class="card-subtitle mb-2 text-muted">  </h6>
+        <button class="btn btn-primary" id="pvtbtn" type="button" onclick="flip(pvtbtn,privatewebimg,privateweb)">Flip Private Web</button>
+    </div>
+  </div>
+</div>
 {% endif %}
 
 {% if pubflip == True  %}
-  <h3> Public Web </h3>
-  <hr>
-  Bound To:<br>
-  <span id="publicwebimg">
-      {% if pubweb == 'A' %}
-      <img class="card-img-top" src="{{ url_for('static', filename='A.png') }}" alt="Card image cap">
-      {% endif %}
-      {% if pubweb == 'B' %}
-      <img class="card-img-top" src="{{ url_for('static', filename='B.png') }}" alt="Card image cap">
-      {% endif %}
-  </span>
-  <p id="publicweb"> . </p>
-  <form class="form form-horizontal" method="post" role="form">
-    <button class="btn btn-primary" id="pubbtn" type="button" onclick="flip(pubbtn,publicwebimg,publicweb)">Flip Public Web</button>
-  </form>
+<div class="col-sm">
+  <div class="card w-75" style="max-width: 10rem;">
+    <div class="card-body">
+        <h3 class="card-title">Public Web</h3>
+        <span id="publicwebimg">
+          {% if pubweb == 'A' %}
+            <img class="card-img-top" src="{{ url_for('static', filename='A.png') }}" alt="Card image cap">
+          {% endif %}
+          {% if pubweb == 'B' %}
+            <img class="card-img-top" src="{{ url_for('static', filename='B.png') }}" alt="Card image cap">
+          {% endif %}
+        </span>
+        <h6 class="card-subtitle mb-2 text-muted" id="publicweb">  </h6>
+        <button class="btn btn-primary" id="pubbtn" type="button" onclick="flip(pubbtn,publicwebimg,publicweb)">Flip Public Web</button>
+    </div>
+  </div>
+</div>
 {% endif %}
 
 {% if betaflip == True  %}
-  <h3> Beta Web </h3>
-  <hr>
-  Bound To:<br>
-
-  <span id="betawebimg">
-      {% if betaweb == 'A' %}
-      <img class="card-img-top" src="{{ url_for('static', filename='A.png') }}" alt="Card image cap">
-      {% endif %}
-      {% if betaweb == 'B' %}
-      <img class="card-img-top" src="{{ url_for('static', filename='B.png') }}" alt="Card image cap">
-      {% endif %}
-  </span>
-  <p id="betaweb"> . </p>
-  <form class="form form-horizontal" method="post" role="form">
-    <button class="btn btn-primary" id="betabtn" type="button" onclick="flip(betabtn,betawebimg,betaweb)">Flip Beta Web</button>
-  </form>
+<div class="col-sm">
+  <div class="card w-75" style="max-width: 10rem;">
+    <div class="card-body">
+        <h3 class="card-title">Beta Web</h3>
+        <span id="betawebimg">
+          {% if betaweb == 'A' %}
+            <img class="card-img-top" src="{{ url_for('static', filename='A.png') }}" alt="Card image cap">
+          {% endif %}
+          {% if betaweb == 'B' %}
+            <img class="card-img-top" src="{{ url_for('static', filename='B.png') }}" alt="Card image cap">
+          {% endif %}
+        </span>
+        <h6 class="card-subtitle mb-2 text-muted" id="betaweb">  </h6>
+        <button class="btn btn-primary" id="betabtn" type="button" onclick="flip(betabtn,betawebimg,betaweb)">Flip Beta Web</button>
+    </div>
+  </div>
+</div>
 {% endif %}
-
+</div>
 <script>
      function flip(sourceElem, destElemImg, destElem) {
          $(destElem).html('<img src="static/loading.gif">');
          $(destElemImg).html('<img src="static/loading.gif">');
-         $.post('/flip', {
+         $.post('/_flip', {
              text: $(sourceElem).text(),
          }).done(function(response) {
              $(destElem).text(response['text'])

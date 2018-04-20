@@ -1,110 +1,147 @@
 {% extends "base.html" %}
-{% import 'bootstrap/wtf.html' as wtf %}
-{% block app_content %}
 
-<h1>Realtracs Uptimes</h1>
-<hr>
-<h2>Private Web:  </h2>
-<p>
-  <strong>Current Month Total Uptime: </strong>
-  {% if PrivateUpTime['mtd'] > 99.9399 %}
-  <span style = "color: green;">
-  {% endif %}
-  {% if PrivateUpTime['mtd'] < 99.9399 and PrivateUpTime['mtd'] > 99.8999 %}
-  <span style = "color: orange;">
-  {% endif %}
-  {% if PrivateUpTime['mtd'] < 99.9000 %}
-  <span style = "color: red;">
-  {% endif %}
-  {{ PrivateUpTime['mtd'] }}</span>
-   |
-  <strong>Current Month Critical Uptime: </strong>
-  {% if PrivateUpTime['c_mtd'] > 99.9399 %}
-  <span style = "color: green;">
-  {% endif %}
-  {% if PrivateUpTime['c_mtd'] < 99.9399 and PrivateUpTime['c_mtd'] > 99.8999 %}
-  <span style = "color: orange;">
-  {% endif %}
-  {% if PrivateUpTime['c_mtd'] < 99.9000 %}
-  <span style = "color: red;">
-  {% endif %}
- {{ PrivateUpTime['c_mtd'] }}</span>
-</p>
-<p>
-  <strong>Prior Month Total Uptime: </strong>
-  {% if PrivateUpTime['pmtd'] > 99.9399 %}
-  <span style = "color: green;">
-  {% endif %}
-  {% if PrivateUpTime['pmtd'] < 99.9399 and PrivateUpTime['pmtd'] > 99.8999 %}
-  <span style = "color: orange;">
-  {% endif %}
-  {% if PrivateUpTime['pmtd'] < 99.9000 %}
-  <span style = "color: red;">
-  {% endif %}
-  {{ PrivateUpTime['pmtd'] }}</span>
-   |
-  <strong>Prior Month Critical Uptime: </strong>
-  {% if PrivateUpTime['c_pmtd'] > 99.9399 %}
-  <span style = "color: green;">
-  {% endif %}
-  {% if PrivateUpTime['c_pmtd'] < 99.9399 and PrivateUpTime['c_pmtd'] > 99.8999 %}
-  <span style = "color: orange;">
-  {% endif %}
-  {% if PrivateUpTime['c_pmtd'] < 99.9000 %}
-  <span style = "color: red;">
-  {% endif %}
-  {{ PrivateUpTime['c_pmtd'] }}</span>
-</p>
-<p>
-  <strong>Current Year to Date Total Uptime: </strong>
-  {% if PrivateUpTime['ytd'] > 99.9399 %}
-  <span style = "color: green;">
-  {% endif %}
-  {% if PrivateUpTime['ytd'] < 99.9399 and PrivateUpTime['ytd'] > 99.8999 %}
-  <span style = "color: orange;">
-  {% endif %}
-  {% if PrivateUpTime['ytd'] < 99.9000 %}
-  <span style = "color: red;">
-  {% endif %}
-  {{ PrivateUpTime['ytd'] }}</span>
-   |
-  <strong>Current Year to Date Crtical Uptime: </strong>
-  {% if PrivateUpTime['c_ytd'] > 99.9399 %}
-  <span style = "color: green;">
-  {% endif %}
-  {% if PrivateUpTime['c_ytd'] < 99.9399 and PrivateUpTime['c_ytd'] > 99.8999 %}
-  <span style = "color: orange;">
-  {% endif %}
-  {% if PrivateUpTime['c_ytd'] < 99.9000 %}
-  <span style = "color: red;">
-  {% endif %}
-  {{ PrivateUpTime['c_ytd'] }} </span>
-</p>
-<p>
-  <strong>Prior Year Total Uptime: </strong>
-  {% if PrivateUpTime['pytd'] > 99.9399 %}
-  <span style = "color: green;">
-  {% endif %}
-  {% if PrivateUpTime['pytd'] < 99.9399 and PrivateUpTime['pytd'] > 99.8999 %}
-  <span style = "color: orange;">
-  {% endif %}
-  {% if PrivateUpTime['pytd'] < 99.9000 %}
-  <span style = "color: red;">
-  {% endif %}
-  {{ PrivateUpTime['pytd'] }}</span>
-   |
-  <strong>Prior Year Critical Uptime: </strong>
-  {% if PrivateUpTime['c_pytd'] > 99.9399 %}
-  <span style = "color: green;">
-  {% endif %}
-  {% if PrivateUpTime['c_pytd'] < 99.9399 and PrivateUpTime['c_pytd'] > 99.8999 %}
-  <span style = "color: orange;">
-  {% endif %}
-  {% if PrivateUpTime['c_pytd'] < 99.9000 %}
-  <span style = "color: red;">
-  {% endif %}
-  {{ PrivateUpTime['c_pytd'] }}</span>
-  </p>
+{% block app_content %}
+<div class="row">
+  <h1>Realtracs Uptimes</h1>
+</div>
+<div class="row">
+  <h2>Private Web:  </h2>
+</div>
+<div class="row">
+  <div class="col-sm">
+    <p>Current Month Total Uptime: </p>
+  </div>
+  <div class="col-sm">
+    {% if PrivateUpTime['mtd'] > 99.9399 %}
+    <span style = "color: green;">
+    {% endif %}
+    {% if PrivateUpTime['mtd'] < 99.9399 and PrivateUpTime['mtd'] > 99.8999 %}
+    <span style = "color: orange;">
+    {% endif %}
+    {% if PrivateUpTime['mtd'] < 99.9000 %}
+    <span style = "color: red;">
+    {% endif %}
+      {{ PrivateUpTime['mtd'] }}
+    </span>
+  </div>
+  <div class="col-sm">
+    <p>Current Month Critical Uptime: </p>
+  </div>
+  <div class="col-sm">
+    {% if PrivateUpTime['c_mtd'] > 99.9399 %}
+    <span style = "color: green;">
+    {% endif %}
+    {% if PrivateUpTime['c_mtd'] < 99.9399 and PrivateUpTime['c_mtd'] > 99.8999 %}
+    <span style = "color: orange;">
+    {% endif %}
+    {% if PrivateUpTime['c_mtd'] < 99.9000 %}
+    <span style = "color: red;">
+    {% endif %}
+      {{ PrivateUpTime['c_mtd'] }}</span>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm">
+    <p>Prior Month Total Uptime: </p>
+  </div>
+  <div class="col-sm">
+    {% if PrivateUpTime['pmtd'] > 99.9399 %}
+    <span style = "color: green;">
+    {% endif %}
+    {% if PrivateUpTime['pmtd'] < 99.9399 and PrivateUpTime['pmtd'] > 99.8999 %}
+    <span style = "color: orange;">
+    {% endif %}
+    {% if PrivateUpTime['pmtd'] < 99.9000 %}
+    <span style = "color: red;">
+    {% endif %}
+      {{ PrivateUpTime['pmtd'] }}</span>
+  </div>
+  <div class="col-sm">
+    <p>Prior Month Critical Uptime: </p>
+  </div>
+  <div class="col-sm">
+    {% if PrivateUpTime['c_pmtd'] > 99.9399 %}
+    <span style = "color: green;">
+    {% endif %}
+    {% if PrivateUpTime['c_pmtd'] < 99.9399 and PrivateUpTime['c_pmtd'] > 99.8999 %}
+    <span style = "color: orange;">
+    {% endif %}
+    {% if PrivateUpTime['c_pmtd'] < 99.9000 %}
+    <span style = "color: red;">
+    {% endif %}
+      {{ PrivateUpTime['c_pmtd'] }}
+    </span>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm">
+    <p>Current Year to Date Total Uptime: </p>
+  </div>
+  <div class="col-sm">
+    {% if PrivateUpTime['ytd'] > 99.9399 %}
+    <span style = "color: green;">
+    {% endif %}
+    {% if PrivateUpTime['ytd'] < 99.9399 and PrivateUpTime['ytd'] > 99.8999 %}
+    <span style = "color: orange;">
+    {% endif %}
+    {% if PrivateUpTime['ytd'] < 99.9000 %}
+    <span style = "color: red;">
+    {% endif %}
+      {{ PrivateUpTime['ytd'] }}
+    </span>
+  </div>
+  <div class="col-sm">
+    <p>Current Year to Date Crtical Uptime: </p>
+  </div>
+  <div class="col-sm">
+    {% if PrivateUpTime['c_ytd'] > 99.9399 %}
+    <span style = "color: green;">
+    {% endif %}
+    {% if PrivateUpTime['c_ytd'] < 99.9399 and PrivateUpTime['c_ytd'] > 99.8999 %}
+    <span style = "color: orange;">
+    {% endif %}
+    {% if PrivateUpTime['c_ytd'] < 99.9000 %}
+    <span style = "color: red;">
+    {% endif %}
+      {{ PrivateUpTime['c_ytd'] }}
+    </span>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm">
+    <p>Prior Year Total Uptime: </p>
+  </div>
+  <div class="col-sm">
+    {% if PrivateUpTime['pytd'] > 99.9399 %}
+    <span style = "color: green;">
+    {% endif %}
+    {% if PrivateUpTime['pytd'] < 99.9399 and PrivateUpTime['pytd'] > 99.8999 %}
+    <span style = "color: orange;">
+    {% endif %}
+    {% if PrivateUpTime['pytd'] < 99.9000 %}
+    <span style = "color: red;">
+      {% endif %}
+      {{ PrivateUpTime['pytd'] }}
+    </span>
+  </div>
+  <div class="col-sm">
+     <p>Prior Year Critical Uptime: </p>
+  </div>
+  <div class="col-sm">
+    {% if PrivateUpTime['c_pytd'] > 99.9399 %}
+    <span style = "color: green;">
+    {% endif %}
+    {% if PrivateUpTime['c_pytd'] < 99.9399 and PrivateUpTime['c_pytd'] > 99.8999 %}
+    <span style = "color: orange;">
+    {% endif %}
+    {% if PrivateUpTime['c_pytd'] < 99.9000 %}
+    <span style = "color: red;">
+    {% endif %}
+      {{ PrivateUpTime['c_pytd'] }}
+    </span>
+  </div>
+</div>
+
 <hr>
 <h2>Public Web:</h2>
 <p>
@@ -311,6 +348,5 @@
   {% endif %}
   {{ EmailUpTime['c_pytd'] }}</span>
 </p>
-
 
 {% endblock %}

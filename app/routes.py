@@ -93,7 +93,7 @@ def nsbndmgr():
 
         return render_template('nsbndmgr.html', title='Binding Manager', pvtweb=pvtweb, pubweb=pubweb, betaweb=betaweb, pvtflip=session['ns_flip_pvt'], pubflip=session['ns_flip_pub'], betaflip=session['ns_flip_beta'])
 
-@app.route('/bindscript', methods=['GET','POST'])
+@app.route('/_bindscript', methods=['GET','POST'])
 def bindscript():
     ns_name = 'nsvpx2.realtracs.net'
     ns_user = app.config['NS_RO_USER']
@@ -117,15 +117,16 @@ def bindscript():
     logout_result = ns.nslogout(ns_name, session['read_token'])
 
 
-@app.route('/flip', methods=['POST'])
+@app.route('/_flip', methods=['POST'])
 @login_required
 def flip_side():
     if request.form['text'] == 'Flip Private Web':
         results = ns.bindings(session['ns_name'], session['ns_auth_token'])
         for result in results:
             if result['vs'] == 'pvt_web':
-                response = result['svcg']
-        return jsonify({'text': response })
+                response = 'Updated to ' + result['svcg']
+                svcg = result['svcg']
+        return jsonify({'text': response, 'svcg': svcg})
     elif request.form['text'] == 'Flip Public Web':
         results = ns.bindings(session['ns_name'], session['ns_auth_token'])
         for result in results:

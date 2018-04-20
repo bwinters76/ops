@@ -58,7 +58,7 @@
 <script>
      function flip(sourceElem, destElemImg, destElem) {
          $(destElem).html('<img src="static/loading.gif">');
-         $.post('/flip', {
+         $.post('/_flip', {
              text: $(sourceElem).text(),
          }).done(function(response) {
              $(destElem).text(response['text'])

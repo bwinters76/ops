@@ -24,18 +24,11 @@
   {% endfor %}
   </ul>
   {% endif %}
-  <form action="" method="POST">
-    {{ form.hidden_tag() }}
-    <p>
-      {{ form.enablepvtflip.label }}
-      {{ form.enablepvtflip() }}<br>
-      {{ form.enablepubflip.label }}
-      {{ form.enablepubflip() }}<br>
-      {{ form.enablebetaflip.label }}
-      {{ form.enablebetaflip() }}<br>
-    </p>
-    <p>{{ form.submit() }}</p>
-  </form>
+  <div class="row">
+      <div class="col-md-4">
+          {{ wtf.quick_form(form) }}
+      </div>
+  </div>
 
 
 {% endblock %}

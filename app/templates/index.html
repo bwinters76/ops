@@ -2,56 +2,49 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 {% block app_content %}
 <div id="Webs">
-<h3>Current Bindings:</h3>
-{% if bindings %}
-{% for binding in bindings %}
-  {% if binding['vs'] == 'pvt_web' %}
-      <h3>Private Web</h3>
-        <span id="privatewebimg">
-          {% if binding['svcg'] == 'A' %}
-          <img src="static/A.png" alt="a">
-          {% endif %}
-          {% if binding['svcg'] == 'B' %}
-          <img src="static/B.png" alt="b">
-          {% endif %}
-        </span>
-      {% endif %}
-  {% if binding['vs'] == 'pub_api' %}
-        <h3>Public Web</h3>
-        <span id="publicwebimg">
-          {% if binding['svcg'] == 'A' %}
-          <img src="static/A.png" alt="a">
-          {% endif %}
-          {% if binding['svcg'] == 'B' %}
-          <img src="static/B.png" alt="b">
-          {% endif %}
-        </span>
-  {% endif %}
-  {% if binding['vs'] == 'beta_api' %}
-        <h3 >Beta Web</h3>
-        <span id="betawebimg">
-          {% if binding['svcg'] == 'A' %}
-          <img src="static/X.png" alt="a">
-          {% endif %}
-          {% if binding['svcg'] == 'B' %}
-          <img src="static/X.png" alt="b">
-          {% endif %}
-        </span>
-  {% endif %}
-{% endfor %}
-{% endif %}
+  <h3>Current Bindings:</h3>
+  <div class="row">
+
+      <div class="col-sm">
+        <div class="card w-75" style="max-width: 10rem;">
+          <div class="card-body">
+              <h3 class="card-title">Private Web</h3>
+              <span id="privatewebimg">
+                  <img class="card-img-top" src="static/X.png" alt="x">
+              </span>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm">
+        <div class="card w-75" style="max-width: 10rem;">
+          <div class="card-body">
+            <h3 class="card-title">Public Web</h3>
+            <span id="publicwebimg">
+                <img class="card-img-top" src="static/X.png" alt="x">
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm">
+        <div class="card w-75" style="max-width: 10rem;">
+          <div class="card-body">
+            <h3 class="card-title">Beta Web</h3>
+            <span id="betawebimg">
+                <img class="card-img-top" src="static/X.png" alt="x">
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
 </div>
 <script>
     function autoRefresh_div() {
-      $("#Webs").load(bindscript('privatewebimg','publicwebimg','betawebimg'));
+      $("#Webs").load(bindscript('#privatewebimg','#publicwebimg','#betawebimg'));
       }
       setInterval('autoRefresh_div()', 5000);
 
      function bindscript(elemImg1, elemImg2, elemImg3) {
-         $(elemImg1).html('<img src="static/loading.gif">');
-         $(elemImg2).html('<img src="static/loading.gif">');
-         $(elemImg3).html('<img src="static/loading.gif">');
-         $.post('/bindscript',{
+         $.post('/_bindscript',{
            text: "test",
           }).done(function(response) {
               if (response['pvt_web'] == "A") {

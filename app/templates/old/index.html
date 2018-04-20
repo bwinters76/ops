@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% block app_content %}
+<div id="Webs">
+  <h3>Current Bindings:</h3>
+  <div class="row">
+
+      {% if bindings %}
+      {% for binding in bindings %}
+        {% if binding['vs'] == 'pvt_web' %}
+        <div class="col-sm">
+        <div class="card w-75" style="max-width: 10rem;">
+          <div class="card-body">
+              <h3 class="card-title">Private Web</h3>
+              <span id="privatewebimg">
+                  {% if binding['svcg'] == 'A' %}
+                    <img class="card-img-top" src="static/A.png" alt="a">
+                  {% endif %}
+                  {% if binding['svcg'] == 'B' %}
+                    <img class="card-img-top" src="static/B.png" alt="b">
+                  {% endif %}
+              </span>
+          </div>
+        </div>
+      </div>
+        {% endif %}
+        {% if binding['vs'] == 'pub_api' %}
+        <div class="col-sm">
+        <div class="card w-75" style="max-width: 10rem;">
+          <div class="card-body">
+            <h3 class="card-title">Public Web</h3>
+            <span id="publicwebimg">
+              {% if binding['svcg'] == 'A' %}
+                <img class="card-img-top" src="static/A.png" alt="a">
+              {% endif %}
+              {% if binding['svcg'] == 'B' %}
+                <img class="card-img-top" src="static/B.png" alt="b">
+              {% endif %}
+            </span>
+          </div>
+        </div>
+      </div>
+        {% endif %}
+        {% if binding['vs'] == 'beta_api' %}
+        <div class="col-sm">
+        <div class="card w-75" style="max-width: 10rem;">
+          <div class="card-body">
+            <h3 class="card-title">Beta Web</h3>
+            <span id="betawebimg">
+              {% if binding['svcg'] == 'A' %}
+                <img class="card-img-top" src="static/X.png" alt="a">
+              {% endif %}
+              {% if binding['svcg'] == 'B' %}
+                <img class="card-img-top" src="static/X.png" alt="b">
+              {% endif %}
+            </span>
+          </div>
+        </div>
+      </div>
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+    </div>
+</div>
+<script>
+    function autoRefresh_div() {
+      $("#Webs").load(bindscript('#privatewebimg','#publicwebimg','#betawebimg'));
+      }
+      setInterval('autoRefresh_div()', 5000);
+
+     function bindscript(elemImg1, elemImg2, elemImg3) {
+         $.post('/_bindscript',{
+           text: "test",
+          }).done(function(response) {
+              if (response['pvt_web'] == "A") {
+                $(elemImg1).html('<img class="card-img-top" src="static/A.png" alt="Card image cap">');
+              } else if (response['pvt_web'] == "B") {$(elemImg1).html('<img class="card-img-top" src="static/B.png" alt="Card image cap">');
+              } else {$(elemImg1).html('<img class="card-img-top" src="static/X.png" alt="Card image cap">')}
+              if (response['pub_web'] == "A") {
+                $(elemImg2).html('<img class="card-img-top" src="static/A.png" alt="Card image cap">');
+              } else if (response['pub_web'] == "B") {$(elemImg2).html('<img class="card-img-top" src="static/B.png" alt="Card image cap">');
+              } else {$(elemImg2).html('<img class="card-img-top" src="static/X.png" alt="Card image cap">')}
+              if (response['beta_web'] == "A") {
+                $(elemImg3).html('<img class="card-img-top" src="static/A.png" alt="Card image cap">');
+              } else if (response['beta_web'] == "B") {$(elemImg3).html('<img class="card-img-top" src="static/B.png" alt="Card image cap">');
+              } else {$(elemImg3).html('<img class="card-img-top" src="static/X.png" alt="Card image cap">')}
+              $('#Webs').text(response['message'], response['pvt_web']);
+            }).fail(function() {
+             $(elemImg1).html('<img class="card-img-top" src="static/X.png" alt="Card image cap">');
+         });
+
+     }
+
+
+ </script>
+{% endblock %}
