@@ -21,10 +21,13 @@ def login_required(f):
 @app.route('/')
 @app.route('/index')
 def index():
+    uptime_pvt = uptime.PrivateUptime('.net')
+    uptime_pub = uptime.PrivateUptime('.com')
+    uptime_eml = uptime.PrivateUptime('email')
     if 'logged_in' in session:
         #flash('already logged in')
         ns_bound_list = ns.bindings(session['ns_name'], session['ns_auth_token'])
-        return render_template('index.html', bindings=ns_bound_list)
+        return render_template('index.html', bindings=ns_bound_list, uptime_pvt=uptime_pvt['mtd'], uptime_pub=uptime_pub['mtd'], uptime_eml=uptime_eml['mtd'])
     else:
         ns_name = 'nsvpx2.realtracs.net'
         ns_user = app.config['NS_RO_USER']
@@ -34,10 +37,10 @@ def index():
             session['read_token'] = read_login.cookies['NITRO_AUTH_TOKEN']
             #flash('logged in with ' + session['read_token'])
             ns_bound_list = ns.bindings(ns_name, session['read_token'])
-            return render_template('index.html', bindings=ns_bound_list)
+            return render_template('index.html', bindings=ns_bound_list, uptime_pvt=uptime_pvt['mtd'], uptime_pub=uptime_pub['mtd'], uptime_eml=uptime_eml['mtd'])
         else:
             flash('Something went wrong with login...')
-            return render_template('index.html')
+            return render_template('index.html', uptime_pvt=uptime_pvt['mtd'], uptime_pub=uptime_pub['mtd'], uptime_eml=uptime_eml['mtd'])
         logout_result = ns.nslogout(ns_name, session['read_token'])
         #flash(logout_result)
 
@@ -219,6 +222,13 @@ def uptimes():
     uptime_pub = uptime.PrivateUptime('.com')
     uptime_eml = uptime.PrivateUptime('email')
     return render_template('uptimes.html', title = 'Uptimes', PrivateUpTime=uptime_pvt, PublicUpTime=uptime_pub, EmailUpTime=uptime_eml)
+
+@app.route('/_uptimes', methods=['POST'])
+def _uptimes():
+    uptime_pvt = uptime.PrivateUptime('.net')
+    uptime_pub = uptime.PrivateUptime('.com')
+    uptime_eml = uptime.PrivateUptime('email')
+    return jsonify({'uptime_pvt':uptime_pvt['mtd'], 'uptime_pub':uptime_pub['mtd'], 'uptime_eml':uptime_eml['mtd']})
 
 @app.route('/uptime_report', methods=['GET', 'POST'])
 def uptime_report():

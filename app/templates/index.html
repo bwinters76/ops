@@ -1,14 +1,72 @@
 {% extends "base.html" %}
 {% import 'bootstrap/wtf.html' as wtf %}
 {% block app_content %}
-<div id="Webs">
-  <h3>Current Bindings:</h3>
+<div id="uptimes">
+  <h4>Current Uptimes:</h4>
   <div class="row">
-
+      <div class="col-sm">
+        <span id="privatewebuptime">
+          {% if uptime_pvt > 99.9399 %}
+          <div class="card w-75 text-center text-white bg-success mb-3" style="max-width: 10rem;">
+          {% endif %}
+          {% if uptime_pvt < 99.9399 and uptime_pvt > 99.8999 %}
+          <div class="card w-75 text-center text-white bg-warning mb-3" style="max-width: 10rem;">
+          {% endif %}
+          {% if uptime_pvt < 99.9000 %}
+          <div class="card w-75 text-center text-white bg-danger mb-3" style="max-width: 10rem;">
+          {% endif %}
+        </span>
+          <div class="card-body">
+              <h5 class="card-title">Private Web</h5>
+              <h6 id="privateweb" class="card-subtitle text-center text-white mb-2"> {{ uptime_pvt }}%  </h6>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm">
+        <span id="publicwebuptime">
+          {% if uptime_pvt > 99.9399 %}
+          <div class="card w-75 text-center text-white bg-success mb-3" style="max-width: 10rem;">
+          {% endif %}
+          {% if uptime_pvt < 99.9399 and uptime_pvt > 99.8999 %}
+          <div class="card w-75 text-center text-white bg-warning mb-3" style="max-width: 10rem;">
+          {% endif %}
+          {% if uptime_pvt < 99.9000 %}
+          <div class="card w-75 text-center text-white bg-danger mb-3" style="max-width: 10rem;">
+          {% endif %}
+        </span>
+          <div class="card-body">
+            <h5 class="card-title">Public Web</h5>
+            <h6 id="publicweb" class="card-subtitle text-center text-white mb-2"> {{ uptime_pub }}%  </h6>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm">
+        <span id="emailuptime">
+          {% if uptime_pvt > 99.9399 %}
+          <div class="card w-75 text-center text-white bg-success mb-3" style="max-width: 10rem;">
+          {% endif %}
+          {% if uptime_pvt < 99.9399 and uptime_pvt > 99.8999 %}
+          <div class="card w-75 text-center text-white bg-warning mb-3" style="max-width: 10rem;">
+          {% endif %}
+          {% if uptime_pvt < 99.9000 %}
+          <div class="card w-75 text-center text-white bg-danger mb-3" style="max-width: 10rem;">
+          {% endif %}
+        </span>
+          <div class="card-body">
+            <h5 class="card-title">Email</h5>
+            <h6 id="email" class="card-subtitle text-center text-white mb-2"> {{ uptime_eml }}%  </h6>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+<div id="Webs">
+  <h4>Current Bindings:</h4>
+  <div class="row">
       <div class="col-sm">
         <div class="card w-75" style="max-width: 10rem;">
           <div class="card-body">
-              <h3 class="card-title">Private Web</h3>
+              <h5 class="card-title">Private Web</h5>
               <span id="privatewebimg">
                   <img class="card-img-top" src="static/X.png" alt="x">
               </span>
@@ -18,7 +76,7 @@
       <div class="col-sm">
         <div class="card w-75" style="max-width: 10rem;">
           <div class="card-body">
-            <h3 class="card-title">Public Web</h3>
+            <h5 class="card-title">Public Web</h5>
             <span id="publicwebimg">
                 <img class="card-img-top" src="static/X.png" alt="x">
             </span>
@@ -28,7 +86,7 @@
       <div class="col-sm">
         <div class="card w-75" style="max-width: 10rem;">
           <div class="card-body">
-            <h3 class="card-title">Beta Web</h3>
+            <h5 class="card-title">Beta Web</h5>
             <span id="betawebimg">
                 <img class="card-img-top" src="static/X.png" alt="x">
             </span>
@@ -37,10 +95,12 @@
       </div>
     </div>
 </div>
+
 <script>
+
     function autoRefresh_div() {
       $("#Webs").load(bindscript('#privatewebimg','#publicwebimg','#betawebimg'));
-      }
+    }
       setInterval('autoRefresh_div()', 5000);
 
      function bindscript(elemImg1, elemImg2, elemImg3) {
@@ -65,7 +125,6 @@
          });
 
      }
-
 
  </script>
 {% endblock %}
