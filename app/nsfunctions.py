@@ -136,9 +136,6 @@ def bindings(nsname, AuthToken):
         vs_summary_list = dict()
     return ns_bound_list
 
-
-
-
 def buildserverlist(list):
     serverlist = []
     for server in list:

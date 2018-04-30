@@ -1,0 +1,18 @@
+[
+    {
+        "Vserver":  "ohna_san_svm",
+        "Name":  "ohdb_sysdb_vol",
+        "State":  "online",
+        "Total Size GB":  330,
+        "Used":  91,
+        "Available GB":  28.91
+    },
+    {
+        "Vserver":  "ohna_san_svm",
+        "Name":  "ohpubdb_sysdb_vol",
+        "State":  "online",
+        "Total Size GB":  330,
+        "Used":  91,
+        "Available GB":  28.82
+    }
+]

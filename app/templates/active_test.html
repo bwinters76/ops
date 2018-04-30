@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% block app_content %}
+<h1> {{ title }} </h1>
+
+<div id="nav">
+  <ul>
+    <li><a href="#" data-page="_testhome">link1</a></li>
+    <li><a href="#" data-page="_testdl">link2</a></li>
+    <li><a href="#" data-page="_testtutorials">link3</a></li>
+  </ul>
+</div>
+<section id="main"></section>
+
+<script>
+    var app = {
+      nav: $('div ul li a'),
+      content: $('section#main')
+    };
+
+    app.putContent = function(content) {
+      this.content.html(content)
+    }
+
+    app.loadPage = function(page) {
+      $.ajax({
+          url: '/_sample',
+          type: 'get',
+          cache: false,
+          data: {page: page},
+          success: function(response) {
+            app.putContent(response);
+          },
+          error: function() {
+            app.putContent('Could not find that page.');
+          }
+      });
+    }
+
+    app.init = function() {
+      app.nav.on('click', function() {
+        var page = $(this).data('page');
+        app.loadPage(page);
+      });
+    }();
+
+</script>
+
+{% endblock %}

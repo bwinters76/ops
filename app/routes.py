@@ -1,12 +1,15 @@
 from flask import render_template, flash, redirect, url_for, session, request, jsonify
 from app import app, db
+from app import emails
 from app import nsfunctions as ns
-from app.forms import LoginForm, OutageForm, ReportForm, NSForm
+from app import nafunctions as na
+from app.forms import LoginForm, OutageForm, ReportForm, NSForm, EmailReportForm
 from app.models import Outage
 from functools import wraps
 from app import uptime
 from datetime import datetime
 import json
+import os
 
 def login_required(f):
     @wraps(f)
@@ -17,6 +20,30 @@ def login_required(f):
             flash('You need to login first...')
             return  redirect(url_for('login'))
     return wrap
+
+@app.route('/active_test', methods=['GET', 'POST'])
+def activetest():
+    title = 'jQuery Testing'
+    return render_template('active_test.html', title=title)
+
+@app.route('/_sample', methods=['GET', 'POST'])
+def _sample():
+    if request.method == 'POST':
+        data = request.data
+        print(data)
+        volume_count = na.volume_count_over_90('count')
+        return jsonify({'volume_count': volume_count})
+    else:
+        allowed = ['_testhome', '_testdl', '_testtutorials']
+        data = request.args.get('page')
+        if data in allowed:
+            fileDir = os.path.dirname(os.path.realpath('__file__'))
+            filename = os.path.join(fileDir, 'app/templates/' + data + '.html')
+            with open(filename) as page:
+                content = page.read()
+            return content
+        else:
+            return 'Sorry Not Allowed'
 
 @app.route('/')
 @app.route('/index')
@@ -43,6 +70,29 @@ def index():
             return render_template('index.html', uptime_pvt=uptime_pvt['mtd'], uptime_pub=uptime_pub['mtd'], uptime_eml=uptime_eml['mtd'])
         logout_result = ns.nslogout(ns_name, session['read_token'])
         #flash(logout_result)
+
+@app.route('/_naclusterpeerhealth', methods=['POST'])
+def _naclusterpeerhealth():
+    if request.method == 'POST':
+        data = request.data
+        warning_cluster_peer_count = na.warning_cluster_peer_counts()
+        return jsonify({'warning_cluster_peer_count': warning_cluster_peer_count})
+
+@app.route('/_nasnapmirrorhealth', methods=['POST'])
+def _nasnapmirrorhealth():
+    if request.method == 'POST':
+        data = request.data
+        healthy_snapmirror_count = na.healthy_snapmirror_counts()
+        warning_snapmirror_count = na.warning_snapmirror_counts()
+        return jsonify({'warning_snapmirror_count': warning_snapmirror_count, 'healthy_snapmirror_count':healthy_snapmirror_count})
+
+@app.route('/_navolhealth', methods=['POST'])
+def _navolhealth():
+    if request.method == 'POST':
+        data = request.data
+        total_volume_count = na.total_volumes_count()
+        warning_volume_count = na.warning_volumes_count()
+        return jsonify({'warning_volume_count': warning_volume_count,'total_volume_count':total_volume_count})
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -113,9 +163,11 @@ def bindscript():
                 pub_web = binding['svcg']
             elif binding['vs'] == 'beta_web':
                 beta_web = binding['svcg']
+        logout_result = ns.nslogout(ns_name, session['read_token'])
         return jsonify({'pvt_web': pvt_web, 'pub_web': pub_web, 'beta_web': beta_web})
     else:
         flash('Something went wrong with login...')
+        logout_result = ns.nslogout(ns_name, session['read_token'])
         return jsonify({'message': "Something went wrong..."})
     logout_result = ns.nslogout(ns_name, session['read_token'])
 
@@ -252,3 +304,46 @@ def uptime_report():
 
     else:
         return render_template('uptime_report.html',title='Uptime Report', form=form)
+
+@app.route('/email_report', methods=['GET', 'POST'])
+def email_report():
+    form = EmailReportForm()
+    if form.validate_on_submit():
+        selection = form.selecteddate.data
+        selectedyear = selection.year
+        selectedmonth = selection.month
+        MonthString = selection.strftime("%B %Y")
+        recipient = form.enteredemail.data
+
+        uptime_pvt = uptime.UptimeReport(selectedyear, selectedmonth, '.net')
+        list_pvt = uptime.UptimeReportList(selectedyear, selectedmonth, '.net')
+
+        uptime_pub = uptime.UptimeReport(selectedyear, selectedmonth, '.com')
+        list_pub = uptime.UptimeReportList(selectedyear, selectedmonth, '.com')
+
+        uptime_eml = uptime.UptimeReport(selectedyear, selectedmonth, 'email')
+        list_eml = uptime.UptimeReportList(selectedyear, selectedmonth, 'email')
+        message_body_html = render_template('uptime_report.html', title='Uptime Report', Month=MonthString, PrivateUpTime=uptime_pvt, PrivateList=list_pvt, PublicUpTime=uptime_pub, PublicList=list_pub, EmailUpTime=uptime_eml, EmailList=list_eml)
+        message_body_text = render_template('uptime_report.html', title='Uptime Report', Month=MonthString, PrivateUpTime=uptime_pvt, PrivateList=list_pvt, PublicUpTime=uptime_pub, PublicList=list_pub, EmailUpTime=uptime_eml, EmailList=list_eml)
+        emails.send_email('Uptime Report', 'reports@realtracs.com', recipient, message_body_text, message_body_html )
+        return render_template('uptime_report.html', title='Uptime Report', Month=MonthString, PrivateUpTime=uptime_pvt, PrivateList=list_pvt, PublicUpTime=uptime_pub, PublicList=list_pub, EmailUpTime=uptime_eml, EmailList=list_eml)
+
+    else:
+        return render_template('email_report.html',title='Uptime Report', form=form)
+
+
+@app.route('/_navols', methods=['POST'])
+def _navols():
+    volumes = request.get_json(silent=True)
+
+    with open('storage.txt', 'w') as outfile:
+        outfile.write(volumes)
+    return jsonify({'text':'200'})
+
+@app.route('/_nahealth', methods=['POST'])
+def _nahealth():
+    netapp_health_data = request.get_json(silent=True)
+    netapp_health = json.dumps(netapp_health_data)
+    with open('nahealth.txt', 'w') as outfile:
+        outfile.write(netapp_health)
+    return jsonify({'status_code':'201'})

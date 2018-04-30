@@ -33,5 +33,7 @@ class NSForm(FlaskForm):
     submit = SubmitField('Submit Changes')
 
 class EmailReportForm(FlaskForm):
+    selectedreport = RadioField('Which Report', choices=[('m', 'Monthly'), ('y','Yearly')])
+    selecteddate = DateField('Select Date for Report')
     enteredemail = StringField('Email', validators=[DataRequired(), Email()])
     submit = SubmitField('Send Report')

@@ -95,6 +95,23 @@
       </div>
     </div>
 </div>
+<div id="storage">
+  <h4>Storage Health:</h4>
+  <div class="row">
+    <div class="col-sm">
+      <div id="ClusterPeerCountDiv">
+      </div>
+    </div>
+    <div class="col-sm">
+      <div id="SnapmirrorCountDiv">
+      </div>
+    </div>
+    <div class="col-sm">
+      <div id="volCountDiv">
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
 
@@ -103,7 +120,7 @@
     }
       setInterval('autoRefresh_div()', 5000);
 
-     function bindscript(elemImg1, elemImg2, elemImg3) {
+    function bindscript(elemImg1, elemImg2, elemImg3) {
          $.post('/_bindscript',{
            text: "test",
           }).done(function(response) {
@@ -124,7 +141,79 @@
              $(elemImg1).html('<img class="card-img-top" src="static/X.png" alt="Card image cap">');
          });
 
-     }
+     };
+
+     $('#storage')
+         $.ajax({
+             url: '/_navolhealth',
+             type: 'POST',
+             success: function(response) {
+                 if (response['warning_volume_count'] == 0) {
+                   $('#volCountDiv').html('<div class="card w-75 text-center text-white bg-success mb-3" style="max-width: 10rem;"><div class="card-body"><h6 class="card-title">Healthy Volumes Total</h6><h5 id="volCount" class="card-subtitle text-center text-white mb-2"></h5></div></div>');
+                   $('#volCount').text(response['volume_count']);
+                 } else if (response['warning_volume_count'] > 1) {
+                   $('#volCountDiv').html('<div class="card w-75 text-center text-white bg-warning mb-3" style="max-width: 10rem;"><div class="card-body"><h6 class="card-title">Volumes Over 90%</h6><h5 id="volCount" class="card-subtitle text-center text-white mb-2"></h5></div></div>');
+                   $('#volCount').text(response['warning_volume_count']);
+                 }
+
+             },
+             error: function() {
+                 console.log('something went wrong');
+             }
+        });
+        $.ajax({
+           url: '/_naclusterpeerhealth',
+           type: 'POST',
+           success: function(response) {
+               if (response['warning_cluster_peer_count'] == 0) {
+                 $('#ClusterPeerCountDiv').html('<div class="card w-75 text-center text-white bg-success mb-3" style="max-width: 10rem;"><div class="card-body"><h6 class="card-title">Warning Cluster Peers</h6><h5 id="ClusterPeerCount" class="card-subtitle text-center text-white mb-2"></h5></div></div>');
+                 $('#ClusterPeerCount').text(response['warning_cluster_peer_count']);
+               } else if (response['warning_cluster_peer_count'] > 1) {
+                 $('#ClusterPeerCountDiv').html('<div class="card w-75 text-center text-white bg-warning mb-3" style="max-width: 10rem;"><div class="card-body"><h6 class="card-title">Warning Cluster Peers</h6><h5 id="ClusterPeerCount" class="card-subtitle text-center text-white mb-2"></h5></div></div>');
+                 $('#ClusterPeerCount').text(response['warning_cluster_peer_count']);
+               }
+                 },
+               error: function() {
+                   console.log('something went wrong');
+               }
+
+        });
+        $.ajax({
+            url: '/_naclusterpeerhealth',
+            type: 'POST',
+            success: function(response) {
+                if (response['warning_cluster_peer_count'] == 0) {
+                  $('#ClusterPeerCountDiv').html('<div class="card w-75 text-center text-white bg-success mb-3" style="max-width: 10rem;"><div class="card-body"><h6 class="card-title">Warning Cluster Peers</h6><h5 id="ClusterPeerCount" class="card-subtitle text-center text-white mb-2"></h5></div></div>');
+                  $('#ClusterPeerCount').text(response['warning_cluster_peer_count']);
+                } else if (response['warning_cluster_peer_count'] > 1) {
+                  $('#ClusterPeerCountDiv').html('<div class="card w-75 text-center text-white bg-warning mb-3" style="max-width: 10rem;"><div class="card-body"><h6 class="card-title">Warning Cluster Peers</h6><h5 id="ClusterPeerCount" class="card-subtitle text-center text-white mb-2"></h5></div></div>');
+                  $('#ClusterPeerCount').text(response['warning_cluster_peer_count']);
+                }
+
+             },
+             error: function() {
+                 console.log('something went wrong');
+             }
+
+        });
+        $.ajax({
+            url: '/_nasnapmirrorhealth',
+            type: 'POST',
+            success: function(response) {
+                if (response['warning_snapmirror_count'] == 0) {
+                  $('#SnapmirrorCountDiv').html('<div class="card w-75 text-center text-white bg-success mb-3" style="max-width: 10rem;"><div class="card-body"><h6 class="card-title">Healthy SnapMirrors</h6><h5 id="SnapmirrorCount" class="card-subtitle text-center text-white mb-2"></h5></div></div>');
+                  $('#SnapmirrorCount').text(response['healthy_snapmirror_count']);
+                } else if (response['warning_snapmirror_count'] > 1) {
+                  $('#SnapmirrorCountDiv').html('<div class="card w-75 text-center text-white bg-warning mb-3" style="max-width: 10rem;"><div class="card-body"><h6 class="card-title">Warning SnapMirrors</h6><h5 id="SnapmirrorCount" class="card-subtitle text-center text-white mb-2"></h5></div></div>');
+                  $('#SnapmirrorCount').text(response['warning_snapmirror_count']);
+                }
+
+                },
+                error: function() {
+                    console.log('something went wrong');
+                }
+
+        });
 
  </script>
 {% endblock %}
