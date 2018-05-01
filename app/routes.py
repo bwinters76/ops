@@ -78,7 +78,7 @@ def _naclusterpeerhealth():
         cluster_peer_count = na.cluster_peer_counts()
         warning_cluster_peer_count = na.warning_cluster_peer_counts()
         return jsonify({'warning_cluster_peer_count': warning_cluster_peer_count,'cluster_peer_count':cluster_peer_count})
-
+ 
 @app.route('/_nasnapmirrorhealth', methods=['POST'])
 def _nasnapmirrorhealth():
     if request.method == 'POST':
