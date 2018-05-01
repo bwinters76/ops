@@ -166,8 +166,8 @@
            type: 'POST',
            success: function(response) {
                if (response['warning_cluster_peer_count'] == 0) {
-                 $('#ClusterPeerCountDiv').html('<div class="card w-75 text-center text-white bg-success mb-3" style="max-width: 10rem;"><div class="card-body"><h6 class="card-title">Warning Cluster Peers</h6><h5 id="ClusterPeerCount" class="card-subtitle text-center text-white mb-2"></h5></div></div>');
-                 $('#ClusterPeerCount').text(response['warning_cluster_peer_count']);
+                 $('#ClusterPeerCountDiv').html('<div class="card w-75 text-center text-white bg-success mb-3" style="max-width: 10rem;"><div class="card-body"><h6 class="card-title">Healthy Cluster Peers</h6><h5 id="ClusterPeerCount" class="card-subtitle text-center text-white mb-2"></h5></div></div>');
+                 $('#ClusterPeerCount').text(response['cluster_peer_count']);
                } else if (response['warning_cluster_peer_count'] > 1) {
                  $('#ClusterPeerCountDiv').html('<div class="card w-75 text-center text-white bg-warning mb-3" style="max-width: 10rem;"><div class="card-body"><h6 class="card-title">Warning Cluster Peers</h6><h5 id="ClusterPeerCount" class="card-subtitle text-center text-white mb-2"></h5></div></div>');
                  $('#ClusterPeerCount').text(response['warning_cluster_peer_count']);

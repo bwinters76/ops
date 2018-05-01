@@ -47,6 +47,14 @@ def warning_cluster_peer_counts():
             warning_cluster_peer_count += count['UnhealthyClusterPeerCount']
     return warning_cluster_peer_count
 
+def cluster_peer_counts():
+    cluster_peer_count = 0
+    controller_data = load_file()
+    for controller in controller_data:
+        for count in controller['Counts']:
+            cluster_peer_count += count['HealthyClusterPeerCount']
+    return cluster_peer_count
+
 def warning_snapmirror_counts():
     warning_snapmirror_count = 0
     controller_data = load_file()
