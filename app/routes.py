@@ -75,7 +75,7 @@ def index():
 def _naclusterpeerhealth():
     if request.method == 'POST':
         data = request.data
-        cluster_peer_count = na.cluster_peer_counts()
+        cluster_peer_count = na.cluster_peer_counts() 
         warning_cluster_peer_count = na.warning_cluster_peer_counts()
         return jsonify({'warning_cluster_peer_count': warning_cluster_peer_count,'cluster_peer_count':cluster_peer_count})
 

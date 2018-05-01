@@ -1,6 +1,9 @@
 # Untracked files:
+nahealth.txt
+volumes.txt
 config.py
 app/__pycache__
+/logs
 app/logs
 app/Include
 app/Lib
