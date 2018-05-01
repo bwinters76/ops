@@ -40,7 +40,7 @@ def total_volumes_count():
     return total_volume_count
 
 def warning_cluster_peer_counts():
-    warning_cluster_peer_count = 0
+    warning_cluster_peer_count = 0 
     controller_data = load_file()
     for controller in controller_data:
         for count in controller['Counts']:

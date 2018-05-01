@@ -64,31 +64,31 @@
   <h4>Current Bindings:</h4>
   <div class="row">
       <div class="col-sm">
-        <div class="card w-75" style="max-width: 10rem;">
+        <div class="card w-75 border-primary text-center" style="max-width: 10rem;">
           <div class="card-body">
               <h5 class="card-title">Private Web</h5>
               <span id="privatewebimg">
-                  <img class="card-img-top" src="static/X.png" alt="x">
+                  <img class="card-img-top" src="static/loading.gif" alt="x">
               </span>
           </div>
         </div>
       </div>
       <div class="col-sm">
-        <div class="card w-75" style="max-width: 10rem;">
+        <div class="card w-75 border-primary text-center" style="max-width: 10rem;">
           <div class="card-body">
             <h5 class="card-title">Public Web</h5>
             <span id="publicwebimg">
-                <img class="card-img-top" src="static/X.png" alt="x">
+                <img class="card-img-top" src="static/loading.gif" alt="x">
             </span>
           </div>
         </div>
       </div>
       <div class="col-sm">
-        <div class="card w-75" style="max-width: 10rem;">
+        <div class="card w-75 border-primary text-center" style="max-width: 10rem;">
           <div class="card-body">
             <h5 class="card-title">Beta Web</h5>
             <span id="betawebimg">
-                <img class="card-img-top" src="static/X.png" alt="x">
+                <img class="card-img-top" src="static/loading.gif" alt="x">
             </span>
           </div>
         </div>
@@ -117,24 +117,24 @@
 
     function autoRefresh_div() {
       $("#Webs").load(bindscript('#privatewebimg','#publicwebimg','#betawebimg'));
-    }
+      }
       setInterval('autoRefresh_div()', 5000);
 
     function bindscript(elemImg1, elemImg2, elemImg3) {
-         $.post('/_bindscript',{
+         $.post('/_currentbindings',{
            text: "test",
           }).done(function(response) {
               if (response['pvt_web'] == "A") {
-                $(elemImg1).html('<img class="card-img-top" src="static/A.png" alt="Card image cap">');
-              } else if (response['pvt_web'] == "B") {$(elemImg1).html('<img class="card-img-top" src="static/B.png" alt="Card image cap">');
+                $(elemImg1).html('<img class="card-img-top" src="static/A1.png" alt="Card image cap">');
+              } else if (response['pvt_web'] == "B") {$(elemImg1).html('<img class="card-img-top" src="static/B1.png" alt="Card image cap">');
               } else {$(elemImg1).html('<img class="card-img-top" src="static/X.png" alt="Card image cap">')}
               if (response['pub_web'] == "A") {
-                $(elemImg2).html('<img class="card-img-top" src="static/A.png" alt="Card image cap">');
-              } else if (response['pub_web'] == "B") {$(elemImg2).html('<img class="card-img-top" src="static/B.png" alt="Card image cap">');
+                $(elemImg2).html('<img class="card-img-top" src="static/A1.png" alt="Card image cap">');
+              } else if (response['pub_web'] == "B") {$(elemImg2).html('<img class="card-img-top" src="static/B1.png" alt="Card image cap">');
               } else {$(elemImg2).html('<img class="card-img-top" src="static/X.png" alt="Card image cap">')}
               if (response['beta_web'] == "A") {
-                $(elemImg3).html('<img class="card-img-top" src="static/A.png" alt="Card image cap">');
-              } else if (response['beta_web'] == "B") {$(elemImg3).html('<img class="card-img-top" src="static/B.png" alt="Card image cap">');
+                $(elemImg3).html('<img class="card-img-top" src="static/A1.png" alt="Card image cap">');
+              } else if (response['beta_web'] == "B") {$(elemImg3).html('<img class="card-img-top" src="static/B1.png" alt="Card image cap">');
               } else {$(elemImg3).html('<img class="card-img-top" src="static/X.png" alt="Card image cap">')}
               $('#Webs').text(response['message'], response['pvt_web']);
             }).fail(function() {
@@ -142,7 +142,7 @@
          });
 
      };
-
+    function autoRefresh_stg() {
      $('#storage')
          $.ajax({
              url: '/_navolhealth',
@@ -150,7 +150,7 @@
              success: function(response) {
                  if (response['warning_volume_count'] == 0) {
                    $('#volCountDiv').html('<div class="card w-75 text-center text-white bg-success mb-3" style="max-width: 10rem;"><div class="card-body"><h6 class="card-title">Healthy Volumes Total</h6><h5 id="volCount" class="card-subtitle text-center text-white mb-2"></h5></div></div>');
-                   $('#volCount').text(response['volume_count']);
+                   $('#volCount').text(response['total_volume_count']);
                  } else if (response['warning_volume_count'] > 1) {
                    $('#volCountDiv').html('<div class="card w-75 text-center text-white bg-warning mb-3" style="max-width: 10rem;"><div class="card-body"><h6 class="card-title">Volumes Over 90%</h6><h5 id="volCount" class="card-subtitle text-center text-white mb-2"></h5></div></div>');
                    $('#volCount').text(response['warning_volume_count']);
@@ -179,24 +179,6 @@
 
         });
         $.ajax({
-            url: '/_naclusterpeerhealth',
-            type: 'POST',
-            success: function(response) {
-                if (response['warning_cluster_peer_count'] == 0) {
-                  $('#ClusterPeerCountDiv').html('<div class="card w-75 text-center text-white bg-success mb-3" style="max-width: 10rem;"><div class="card-body"><h6 class="card-title">Warning Cluster Peers</h6><h5 id="ClusterPeerCount" class="card-subtitle text-center text-white mb-2"></h5></div></div>');
-                  $('#ClusterPeerCount').text(response['warning_cluster_peer_count']);
-                } else if (response['warning_cluster_peer_count'] > 1) {
-                  $('#ClusterPeerCountDiv').html('<div class="card w-75 text-center text-white bg-warning mb-3" style="max-width: 10rem;"><div class="card-body"><h6 class="card-title">Warning Cluster Peers</h6><h5 id="ClusterPeerCount" class="card-subtitle text-center text-white mb-2"></h5></div></div>');
-                  $('#ClusterPeerCount').text(response['warning_cluster_peer_count']);
-                }
-
-             },
-             error: function() {
-                 console.log('something went wrong');
-             }
-
-        });
-        $.ajax({
             url: '/_nasnapmirrorhealth',
             type: 'POST',
             success: function(response) {
@@ -214,6 +196,7 @@
                 }
 
         });
-
+      }
+      setInterval('autoRefresh_stg()', 5000);
  </script>
 {% endblock %}

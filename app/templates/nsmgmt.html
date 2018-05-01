@@ -3,32 +3,135 @@
 {% block app_content %}
   <h2> {{netscaler}} Management </h2>
   <hr>
-  <p>You are: {{user}}</p>
-  <p>Select an option:</p>
-  <h3>Current Bindings:</h3>
-  {% if bindings %}
-  <ul>
-  {% for binding in bindings %}
-    {% if binding['vs'] == 'pvt_http' %}
-      <li>Private Web HTTP is bound to Side {{ binding['svcg'] }}</li>
-    {% endif %}
-    {% if binding['vs'] == 'pvt_api'%}
-      <li>Private Web API is bound to Side {{ binding['svcg'] }}</li>
-    {% endif %}
-    {% if binding['vs'] == 'pub_api' %}
-      <li> Public Web is bound to Side {{ binding['svcg'] }}</li>
-    {% endif %}
-    {% if binding['vs'] == 'beta_api' %}
-      <li> Beta Web is bound to Side {{ binding['svcg'] }}</li>
-    {% endif %}
-  {% endfor %}
-  </ul>
-  {% endif %}
-  <div class="row">
-      <div class="col-md-4">
-          {{ wtf.quick_form(form) }}
+
+  <!-- Modal -->
+  <div class="modal fade" id="PvtModal" tabindex="-1" role="dialog" aria-labelledby="pvtModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="pvtModalLabel">Flip Private?</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Confirm you want to Flip Private Sides.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" id="pvtbtn" class="btn btn-danger" data-page="pvt_web" data-dismiss="modal" onclick="flip(pvtbtn,pvtWebSvcg)">Confirm Flip</button>
+        </div>
       </div>
+    </div>
+  </div>
+  <!-- Modal -->
+  <div class="modal fade" id="PubModal" tabindex="-1" role="dialog" aria-labelledby="pubModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="pubModalLabel">Flip Public?</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Confirm you want to Flip Public Sides.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" id="pubbtn" class="btn btn-danger" data-page="pub_web" data-dismiss="modal" onclick="flip(pubbtn,pubWebSvcg)">Confirm Flip</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal -->
+  <div class="modal fade" id="BetaModal" tabindex="-1" role="dialog" aria-labelledby="betaModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="betaModalLabel">Flip Beta?</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Confirm you want to Flip Beta Sides.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" id="betabtn" class="btn btn-danger" data-page="beta_web" data-dismiss="modal" onclick="flip(betabtn,betaWebSvcg)">Confirm Flip</button>
+        </div>
+      </div>
+    </div>
   </div>
 
+  <h4>Edit Bindings:</h4>
+  {% if bindings %}
+  <div id="CurrentBindings" class="row">
+    <div class="col-sm">
+      <div id="pvtWebDiv">
+      </div>
+    </div>
+    <div class="col-sm">
+      <div id="pubWebDiv">
+      </div>
+    </div>
+    <div class="col-sm">
+      <div id="betaWebDiv">
+      </div>
+    </div>
+  </div>
+
+
+  {% endif %}
+<div id="ResultMessage">
+</div>
+<script>
+$('#CurrentBindings')
+    $.ajax({
+        url: '/_currentbindings',
+        type: 'POST',
+        success: function(response) {
+            if (response['pvt_web'] == 'A') {
+              $('#pvtWebDiv').html('<div class="card text-center text-white bg-success mb-3" style="max-width: 10rem;"><div class="card-body"><h6 class="card-title">Private Web</h6><h2 id="pvtWebSvcg" class="card-subtitle text-center text-white mb-2"></h2><button type="button" class="btn btn-outline-dark" data-toggle="modal" data-target="#PvtModal">Flip Sides</button></div></div>');
+              $('#pvtWebSvcg').text(response['pvt_web']);
+            } else if (response['pvt_web'] == 'B') {
+              $('#pvtWebDiv').html('<div class="card text-center text-white bg-primary mb-3" style="max-width: 10rem;"><div class="card-body"><h6 class="card-title">Private Web</h6><h2 id="pvtWebSvcg" class="card-subtitle text-center text-white mb-2"></h2><button type="button" class="btn btn-outline-dark" data-toggle="modal" data-target="#PvtModal">Flip Sides</button></div></div>');
+              $('#pvtWebSvcg').text(response['pvt_web']);
+            }
+            if (response['pub_web'] == 'A') {
+              $('#pubWebDiv').html('<div class="card text-center text-white bg-success mb-3" style="max-width: 10rem;"><div class="card-body"><h6 class="card-title">Public Web</h6><h2 id="pubWebSvcg" class="card-subtitle text-center text-white mb-2"></h2><button type="button" class="btn btn-outline-dark" data-toggle="modal" data-target="#PubModal">Flip Sides</button></div></div>');
+              $('#pubWebSvcg').text(response['pub_web']);
+            } else if (response['pub_web'] == 'B') {
+              $('#pubWebDiv').html('<div class="card text-center text-white bg-primary mb-3" style="max-width: 10rem;"><div class="card-body"><h6 class="card-title">Public Web</h6><h2 id="pubWebSvcg" class="card-subtitle text-center text-white mb-2"></h2><button type="button" class="btn btn-outline-dark" data-toggle="modal" data-target="#PubModal">Flip Sides</button></div></div>');
+              $('#pubWebSvcg').text(response['pub_web']);
+            }
+            if (response['beta_web'] == 'A') {
+              $('#betaWebDiv').html('<div class="card text-center text-white bg-success mb-3" style="max-width: 10rem;"><div class="card-body"><h6 class="card-title">Beta Web</h6><h2 id="betaWebSvcg" class="card-subtitle text-center text-white mb-2"></h2><button type="button" class="btn btn-outline-dark" data-toggle="modal" data-target="#BetaModal">Flip Sides</button></div></div>');
+              $('#betaWebSvcg').text(response['beta_web']);
+            } else if (response['beta_web'] == 'B') {
+              $('#betaWebDiv').html('<div class="card text-center text-white bg-primary mb-3" style="max-width: 10rem;"><div class="card-body"><h6 class="card-title">Beta Web</h6><h2 id="betaWebSvcg" class="card-subtitle text-center text-white mb-2"></h2><button type="button" class="btn btn-outline-dark" data-toggle="modal" data-target="#BetaModal">Flip Sides</button></div></div>');
+              $('#betaWebSvcg').text(response['beta_web']);
+            }
+        },
+        error: function() {
+            console.log('something went wrong');
+        }
+   });
+
+   function flip(sourceElem, destElem) {
+       $(destElem).html('<img src="static/loading.gif">');
+        $.post('/_flips', {
+           text: $(sourceElem).data('page'),
+       }).done(function(response) {
+           $(destElem).text(response['svcg']);
+           $('#ResultMessage').html('<div class="alert alert-primary" role="alert">Success!</div>')
+       }).fail(function() {
+           $(destElem).text("??");
+           $('#ResultMessage').html('<div class="alert alert-danger" role="alert">Something went wrong!</div>')
+       });
+   }
+
+</script>
 
 {% endblock %}

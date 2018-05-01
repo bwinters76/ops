@@ -78,7 +78,7 @@ def _naclusterpeerhealth():
         cluster_peer_count = na.cluster_peer_counts()
         warning_cluster_peer_count = na.warning_cluster_peer_counts()
         return jsonify({'warning_cluster_peer_count': warning_cluster_peer_count,'cluster_peer_count':cluster_peer_count})
- 
+
 @app.route('/_nasnapmirrorhealth', methods=['POST'])
 def _nasnapmirrorhealth():
     if request.method == 'POST':
@@ -147,8 +147,8 @@ def nsbndmgr():
 
         return render_template('nsbndmgr.html', title='Binding Manager', pvtweb=pvtweb, pubweb=pubweb, betaweb=betaweb, pvtflip=session['ns_flip_pvt'], pubflip=session['ns_flip_pub'], betaflip=session['ns_flip_beta'])
 
-@app.route('/_bindscript', methods=['GET','POST'])
-def bindscript():
+@app.route('/_currentbindings', methods=['GET','POST'])
+def _currentbindings():
     ns_name = 'nsvpx2.realtracs.net'
     ns_user = app.config['NS_RO_USER']
     ns_pwd = app.config['NS_RO_PWD']
@@ -348,3 +348,50 @@ def _nahealth():
     with open('nahealth.txt', 'w') as outfile:
         outfile.write(netapp_health)
     return jsonify({'status_code':'201'})
+
+@app.route('/_flips', methods=['POST'])
+@login_required
+def _flips():
+    data = request.form['text']
+    print(data)
+    if data == 'pvt_web':
+        results = ns.bindings(session['ns_name'], session['ns_auth_token'])
+        for result in results:
+            if result['vs'] == 'pvt_web':
+                response = 'Updated to ' + result['svcg']
+                svcg = result['svcg']
+        return jsonify({'text': response, 'svcg': svcg})
+    elif data == 'pub_web':
+        results = ns.bindings(session['ns_name'], session['ns_auth_token'])
+        for result in results:
+            if result['vs'] == 'pub_web':
+                response = 'Updated to ' + result['svcg']
+                svcg = result['svcg']
+        return jsonify({'text': response, 'svcg': svcg})
+    elif data == 'beta_web':
+        sideincheck = ns.bindings(session['ns_name'], session['ns_auth_token'])
+        for servicegroup in sideincheck:
+            if servicegroup['vs'] == 'beta_web':
+                sidein = servicegroup['svcg']
+        if sidein == 'A':
+            bindsvcg = ns.ns_lb_svcg_bind(session['ns_name'], app.config['BETA_VS_API'], app.config['BETA_SIDE_B_API'], session['ns_auth_token'])
+            unbindsvcg = ns.ns_lb_svcg_unbind(session['ns_name'], app.config['BETA_VS_API'], app.config['BETA_SIDE_A_API'], session['ns_auth_token'] )
+            results = ns.bindings(session['ns_name'], session['ns_auth_token'])
+            for result in results:
+                if result['vs'] == 'beta_web':
+                    response =  'Updated to Side ' + result['svcg']
+                    svcg = result['svcg']
+            return jsonify({'text': response, 'svcg': svcg })
+        elif sidein == 'B':
+            bindsvcg = ns.ns_lb_svcg_bind(session['ns_name'], app.config['BETA_VS_API'], app.config['BETA_SIDE_A_API'], session['ns_auth_token'])
+            unbindsvcg = ns.ns_lb_svcg_unbind(session['ns_name'], app.config['BETA_VS_API'], app.config['BETA_SIDE_B_API'], session['ns_auth_token'] )
+            results = ns.bindings(session['ns_name'], session['ns_auth_token'])
+            for result in results:
+                if result['vs'] == 'beta_web':
+                    response =  'Updated to Side ' + result['svcg']
+                    svcg = result['svcg']
+            return jsonify({'text': response, 'svcg': svcg })
+        else:
+            return jsonify({'text': 'Binding Failure', 'svcg': '?'})
+    else:
+        return jsonify({'text': 'Did not match Input', 'svcg': 'X'})

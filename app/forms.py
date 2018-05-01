@@ -7,10 +7,9 @@ from wtforms.fields.html5 import DateField
 from wtforms_components import TimeField
 
 class LoginForm(FlaskForm):
-    device = SelectField('Select Device', choices = [('nsvpx1.realtracs.net','NSVPX1'),('nsvpx2.realtracs.net','NSVPX2')])
+    device = SelectField('Select Device', choices = [('nsvpx2.realtracs.net','NSVPX2'),('nsvpx1.realtracs.net','NSVPX1')])
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password',validators=[DataRequired()])
-    remember_me = BooleanField('Remember Me')
     submit = SubmitField('Sign In')
 
 class OutageForm(FlaskForm):
