@@ -3,6 +3,7 @@ from app import app, db
 from app import emails
 from app import nsfunctions as ns
 from app import nafunctions as na
+from app import winfunctions as win
 from app.forms import LoginForm, OutageForm, ReportForm, NSForm, EmailReportForm
 from app.models import Outage
 from functools import wraps
@@ -95,6 +96,12 @@ def _navolhealth():
         warning_volume_count = na.warning_volumes_count()
         return jsonify({'warning_volume_count': warning_volume_count,'total_volume_count':total_volume_count})
 
+@app.route('/_winupdcnt', methods=['POST'])
+def _winupdcnt():
+    if request.method == 'POST':
+        servers_needing_updates_count = win.servers_needing_updates()
+        return jsonify({'servers_needing_updates_count':servers_needing_updates_count})
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -120,6 +127,10 @@ def login():
 @app.route('/nsmgmt', methods=['GET', 'POST'])
 @login_required
 def nsmgmt():
+    authtoken_still_valid = ns.nslbcount(session['ns_name'], session['ns_auth_token'])
+    if authtoken_still_valid != 200:
+        flash('Your session may have expired please login again')
+        return redirect(url_for('login'))
     ns_bound_list = ns.bindings(session['ns_name'], session['ns_auth_token'])
     form = NSForm()
     if form.validate_on_submit():
@@ -349,27 +360,79 @@ def _nahealth():
         outfile.write(netapp_health)
     return jsonify({'status_code':'201'})
 
+@app.route('/_winupdates', methods=['POST'])
+def _winupdates():
+    windows_update_data = request.get_json(silent=True)
+    windows_update_health = json.dumps(windows_update_data)
+    with open('wsushealth.txt', 'w') as outfile:
+        outfile.write(windows_update_health)
+    return jsonify({'status_code':'201'})
+
 @app.route('/_flips', methods=['POST'])
 @login_required
 def _flips():
     data = request.form['text']
-    print(data)
+    sideincheck = ns.bindings(session['ns_name'], session['ns_auth_token'])
     if data == 'pvt_web':
-        results = ns.bindings(session['ns_name'], session['ns_auth_token'])
-        for result in results:
-            if result['vs'] == 'pvt_web':
-                response = 'Updated to ' + result['svcg']
-                svcg = result['svcg']
+        for servicegroup in sideincheck:
+            if servicegroup['vs'] == 'pvt_web':
+                sidein = servicegroup['svcg']
+        if sidein == 'A':
+            bindsvcghttp = ns.ns_lb_svcg_bind(session['ns_name'], app.config['PVT_VS_HTTP'], app.config['PVT_SIDE_B_HTTP'], session['ns_auth_token'])
+            unbindsvcghttp = ns.ns_lb_svcg_unbind(session['ns_name'], app.config['PVT_VS_HTTP'], app.config['PVT_SIDE_A_HTTP'], session['ns_auth_token'] )
+            bindsvcgapi = ns.ns_lb_svcg_bind(session['ns_name'], app.config['PVT_VS_API'], app.config['PVT_SIDE_B_API'], session['ns_auth_token'])
+            unbindsvcgapi = ns.ns_lb_svcg_unbind(session['ns_name'], app.config['PVT_VS_API'], app.config['PVT_SIDE_A_API'], session['ns_auth_token'] )
+            results = ns.bindings(session['ns_name'], session['ns_auth_token'])
+            for result in results:
+                if result['vs'] == 'pvt_web':
+                    response =  'Updated to Side ' + result['svcg']
+                    svcg = result['svcg']
+            ns.nssaveconfig(session['ns_name'], session['ns_auth_token'])
+            return jsonify({'text': response, 'svcg': svcg })
+        elif sidein == 'B':
+            bindsvcghttp = ns.ns_lb_svcg_bind(session['ns_name'], app.config['PVT_VS_HTTP'], app.config['PVT_SIDE_A_HTTP'], session['ns_auth_token'])
+            unbindsvcghttp = ns.ns_lb_svcg_unbind(session['ns_name'], app.config['PVT_VS_HTTP'], app.config['PVT_SIDE_B_HTTP'], session['ns_auth_token'] )
+            bindsvcgapi = ns.ns_lb_svcg_bind(session['ns_name'], app.config['PUB_VS_API'], app.config['PUB_SIDE_A_API'], session['ns_auth_token'])
+            unbindsvcgapi = ns.ns_lb_svcg_unbind(session['ns_name'], app.config['PUB_VS_API'], app.config['PUB_SIDE_B_API'], session['ns_auth_token'] )
+            results = ns.bindings(session['ns_name'], session['ns_auth_token'])
+            for result in results:
+                if result['vs'] == 'pvt_web':
+                    response =  'Updated to Side ' + result['svcg']
+                    svcg = result['svcg']
+            ns.nssaveconfig(session['ns_name'], session['ns_auth_token'])
+            return jsonify({'text': response, 'svcg': svcg })
+        else:
+            return jsonify({'text': 'Binding Failure', 'svcg': '?'})
         return jsonify({'text': response, 'svcg': svcg})
     elif data == 'pub_web':
-        results = ns.bindings(session['ns_name'], session['ns_auth_token'])
-        for result in results:
-            if result['vs'] == 'pub_web':
-                response = 'Updated to ' + result['svcg']
-                svcg = result['svcg']
+        for servicegroup in sideincheck:
+            if servicegroup['vs'] == 'pub_web':
+                sidein = servicegroup['svcg']
+        if sidein == 'A':
+            bindsvcg = ns.ns_lb_svcg_bind(session['ns_name'], app.config['PUB_VS_API'], app.config['PUB_SIDE_B_API'], session['ns_auth_token'])
+            unbindsvcg = ns.ns_lb_svcg_unbind(session['ns_name'], app.config['PUB_VS_API'], app.config['PUB_SIDE_A_API'], session['ns_auth_token'] )
+            results = ns.bindings(session['ns_name'], session['ns_auth_token'])
+            for result in results:
+                if result['vs'] == 'pub_web':
+                    response =  'Updated to Side ' + result['svcg']
+                    svcg = result['svcg']
+            ns.nssaveconfig(session['ns_name'], session['ns_auth_token'])
+            return jsonify({'text': response, 'svcg': svcg })
+        elif sidein == 'B':
+            bindsvcg = ns.ns_lb_svcg_bind(session['ns_name'], app.config['PUB_VS_API'], app.config['PUB_SIDE_A_API'], session['ns_auth_token'])
+            unbindsvcg = ns.ns_lb_svcg_unbind(session['ns_name'], app.config['PUB_VS_API'], app.config['PUB_SIDE_B_API'], session['ns_auth_token'] )
+            results = ns.bindings(session['ns_name'], session['ns_auth_token'])
+            for result in results:
+                if result['vs'] == 'pub_web':
+                    response =  'Updated to Side ' + result['svcg']
+                    svcg = result['svcg']
+            ns.nssaveconfig(session['ns_name'], session['ns_auth_token'])
+            return jsonify({'text': response, 'svcg': svcg })
+        else:
+            return jsonify({'text': 'Binding Failure', 'svcg': '?'})
         return jsonify({'text': response, 'svcg': svcg})
     elif data == 'beta_web':
-        sideincheck = ns.bindings(session['ns_name'], session['ns_auth_token'])
+        #sideincheck = ns.bindings(session['ns_name'], session['ns_auth_token'])
         for servicegroup in sideincheck:
             if servicegroup['vs'] == 'beta_web':
                 sidein = servicegroup['svcg']
@@ -381,6 +444,7 @@ def _flips():
                 if result['vs'] == 'beta_web':
                     response =  'Updated to Side ' + result['svcg']
                     svcg = result['svcg']
+            ns.nssaveconfig(session['ns_name'], session['ns_auth_token'])
             return jsonify({'text': response, 'svcg': svcg })
         elif sidein == 'B':
             bindsvcg = ns.ns_lb_svcg_bind(session['ns_name'], app.config['BETA_VS_API'], app.config['BETA_SIDE_A_API'], session['ns_auth_token'])
@@ -390,6 +454,7 @@ def _flips():
                 if result['vs'] == 'beta_web':
                     response =  'Updated to Side ' + result['svcg']
                     svcg = result['svcg']
+            ns.nssaveconfig(session['ns_name'], session['ns_auth_token'])
             return jsonify({'text': response, 'svcg': svcg })
         else:
             return jsonify({'text': 'Binding Failure', 'svcg': '?'})

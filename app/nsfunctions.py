@@ -11,11 +11,26 @@ def nslogin(nsname, user, pwd):
     response = requests.post(url, headers=headers, data=json.dumps(data))
     return response
 
+def nslbcount(nsname, AuthToken):
+    token = 'NITRO_AUTH_TOKEN=' + AuthToken
+    url = 'https://' + nsname + '/nitro/v1/config/lbvserver?count=yes'
+    headers = {'Cookie':token, 'Content-type':'application/vnd.com.citrix.netscaler.lbvserver+json'}
+    response = requests.get(url, headers=headers)
+    return response.status_code
+
 def nslogout(nsname, AuthToken):
     token = 'NITRO_AUTH_TOKEN=' + AuthToken
     url = 'https://' + nsname + '/nitro/v1/config/logout'
     headers = {'Cookie':token, 'Content-type':'application/vnd.com.citrix.netscaler.logout+json'}
     data = {"logout":{}}
+    response = requests.post(url, headers=headers, data=json.dumps(data))
+    return response
+
+def nssaveconfig(nsname, AuthToken):
+    token = 'NITRO_AUTH_TOKEN=' + AuthToken
+    url = 'https://' + nsname + '/nitro/v1/config/nsconfig?action=save'
+    headers = {'Cookie':token, 'Content-type':'application/vnd.com.citrix.netscaler.nsconfig+json'}
+    data = {"nsconfig":{}}
     response = requests.post(url, headers=headers, data=json.dumps(data))
     return response
 

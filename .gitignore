@@ -1,5 +1,7 @@
 # Untracked files:
 nahealth.txt
+wsushealth.txt
+app.db
 volumes.txt
 config.py
 app/__pycache__
@@ -8,3 +10,4 @@ app/logs
 app/Include
 app/Lib
 app/Scripts
+app/templates/old
