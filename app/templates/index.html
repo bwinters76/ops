@@ -120,7 +120,7 @@
       </div>
     </div>
     <div class="col-sm">
-      <div id="">
+      <div id="FailedUpdatesCountDiv">
       </div>
     </div>
     <div class="col-sm">
@@ -167,7 +167,7 @@
                  if (response['warning_volume_count'] == 0) {
                    $('#volCountDiv').html('<div class="card w-75 text-center text-white bg-success mb-3" style="max-width: 10rem;"><div class="card-body"><h6 class="card-title">Healthy Volumes Total</h6><h5 id="volCount" class="card-subtitle text-center text-white mb-2"></h5></div></div>');
                    $('#volCount').text(response['total_volume_count']);
-                 } else if (response['warning_volume_count'] > 1) {
+                 } else if (response['warning_volume_count'] > 0) {
                    $('#volCountDiv').html('<div class="card w-75 text-center text-white bg-warning mb-3" style="max-width: 10rem;"><div class="card-body"><h6 class="card-title">Volumes Over 90%</h6><h5 id="volCount" class="card-subtitle text-center text-white mb-2"></h5></div></div>');
                    $('#volCount').text(response['warning_volume_count']);
                  }
@@ -184,7 +184,7 @@
                if (response['warning_cluster_peer_count'] == 0) {
                  $('#ClusterPeerCountDiv').html('<div class="card w-75 text-center text-white bg-success mb-3" style="max-width: 10rem;"><div class="card-body"><h6 class="card-title">Healthy Cluster Peers</h6><h5 id="ClusterPeerCount" class="card-subtitle text-center text-white mb-2"></h5></div></div>');
                  $('#ClusterPeerCount').text(response['cluster_peer_count']);
-               } else if (response['warning_cluster_peer_count'] > 1) {
+               } else if (response['warning_cluster_peer_count'] > 0) {
                  $('#ClusterPeerCountDiv').html('<div class="card w-75 text-center text-white bg-warning mb-3" style="max-width: 10rem;"><div class="card-body"><h6 class="card-title">Warning Cluster Peers</h6><h5 id="ClusterPeerCount" class="card-subtitle text-center text-white mb-2"></h5></div></div>');
                  $('#ClusterPeerCount').text(response['warning_cluster_peer_count']);
                }
@@ -201,7 +201,7 @@
                 if (response['warning_snapmirror_count'] == 0) {
                   $('#SnapmirrorCountDiv').html('<div class="card w-75 text-center text-white bg-success mb-3" style="max-width: 10rem;"><div class="card-body"><h6 class="card-title">Healthy SnapMirrors</h6><h5 id="SnapmirrorCount" class="card-subtitle text-center text-white mb-2"></h5></div></div>');
                   $('#SnapmirrorCount').text(response['healthy_snapmirror_count']);
-                } else if (response['warning_snapmirror_count'] > 1) {
+                } else if (response['warning_snapmirror_count'] > 0) {
                   $('#SnapmirrorCountDiv').html('<div class="card w-75 text-center text-white bg-warning mb-3" style="max-width: 10rem;"><div class="card-body"><h6 class="card-title">Warning SnapMirrors</h6><h5 id="SnapmirrorCount" class="card-subtitle text-center text-white mb-2"></h5></div></div>');
                   $('#SnapmirrorCount').text(response['warning_snapmirror_count']);
                 }
@@ -219,9 +219,27 @@
                 if (response['servers_needing_updates_count'] == 0) {
                   $('#NeededUpdatesCountDiv').html('<div class="card w-75 text-center text-white bg-success mb-3" style="max-width: 10rem;"><div class="card-body"><h6 class="card-title">Servers With Pending Updates</h6><h5 id="NeededUpdatesCount" class="card-subtitle text-center text-white mb-2"></h5></div></div>');
                   $('#NeededUpdatesCount').text(response['servers_needing_updates_count']);
-                } else if (response['servers_needing_updates_count'] > 1) {
+                } else if (response['servers_needing_updates_count'] > 0) {
                   $('#NeededUpdatesCountDiv').html('<div class="card w-75 text-center text-white bg-primary mb-3" style="max-width: 10rem;"><div class="card-body"><h6 class="card-title">Servers With Pending Updates</h6><h5 id="NeededUpdatesCount" class="card-subtitle text-center text-white mb-2"></h5></div></div>');
                   $('#NeededUpdatesCount').text(response['servers_needing_updates_count']);
+                }
+
+                },
+                error: function() {
+                    console.log('something went wrong');
+                }
+
+        });
+        $.ajax({
+            url: '/_winfailupdcnt',
+            type: 'POST',
+            success: function(response) {
+                if (response['servers_failed_updates_count'] == 0) {
+                  $('#FailedUpdatesCountDiv').html('<div class="card w-75 text-center text-white bg-success mb-3" style="max-width: 10rem;"><div class="card-body"><h6 class="card-title">Servers With Failed Updates</h6><h5 id="FailedUpdatesCount" class="card-subtitle text-center text-white mb-2"></h5></div></div>');
+                  $('#FailedUpdatesCount').text(response['servers_failed_updates_count']);
+                } else if (response['servers_failed_updates_count'] > 0) {
+                  $('#FailedUpdatesCountDiv').html('<div class="card w-75 text-center text-white bg-danger mb-3" style="max-width: 10rem;"><div class="card-body"><h6 class="card-title">Servers With Failed Updates</h6><h5 id="FailedUpdatesCount" class="card-subtitle text-center text-white mb-2"></h5></div></div>');
+                  $('#FailedUpdatesCount').text(response['servers_failed_updates_count']);
                 }
 
                 },

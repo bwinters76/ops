@@ -16,3 +16,11 @@ def servers_needing_updates():
         if server['NeededCount'] > 0:
             count += 1
     return count
+
+def servers_failed_updates():
+    count = 0
+    windows_update_data = load_file()
+    for server in windows_update_data:
+        if server['FailedCount'] > 0:
+            count += 1
+    return count

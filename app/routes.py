@@ -102,6 +102,12 @@ def _winupdcnt():
         servers_needing_updates_count = win.servers_needing_updates()
         return jsonify({'servers_needing_updates_count':servers_needing_updates_count})
 
+@app.route('/_winfailupdcnt', methods=['POST'])
+def _winfailupdcnt():
+    if request.method == 'POST':
+        servers_failed_updates_count = win.servers_failed_updates()
+        return jsonify({'servers_failed_updates_count':servers_failed_updates_count})
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
