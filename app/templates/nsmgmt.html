@@ -124,12 +124,17 @@ $('#CurrentBindings')
         $.post('/_flips', {
            text: $(sourceElem).data('page'),
        }).done(function(response) {
-           $(destElem).text(response['svcg']);
-           $('#ResultMessage').html('<div class="alert alert-primary" role="alert">Success!</div>')
-       }).fail(function() {
-           $(destElem).text("??");
-           $('#ResultMessage').html('<div class="alert alert-danger" role="alert">Something went wrong!</div>')
-       });
+            if (response['text'] == 403){
+              window.location.reload();
+          } else {
+              $(destElem).text(response['svcg']);
+              $('#ResultMessage').html('<div class="alert alert-primary" role="alert">Success!</div>')
+          }
+      }).fail(function() {
+        $(destElem).text("??");
+        $('#ResultMessage').html('<div class="alert alert-danger" role="alert">Something went wrong!</div>')
+      });
+
    }
 
 </script>

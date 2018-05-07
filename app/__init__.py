@@ -7,6 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_bootstrap import Bootstrap
 from flask_mail import Mail
+from slackclient import SlackClient
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -14,10 +15,11 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 Bootstrap(app)
 mail = Mail(app)
+slack_client = SlackClient(app.config['SLACK_TOKEN'])
 
 from app import routes, models
 from app import nsfunctions
-
+from app import slackfunctions
 
 if not app.debug:
     if app.config['MAIL_SERVER']:

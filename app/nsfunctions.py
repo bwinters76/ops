@@ -1,7 +1,7 @@
 from app import app
 import json, requests
 from flask import flash, session
-
+from app import slackfunctions as slack
 
 
 def nslogin(nsname, user, pwd):
@@ -54,6 +54,10 @@ def ns_lb_svcg_bind(nsname, lbvserver, servicegroup, AuthToken):
     headers = {'Cookie':token, 'Content-Type':'application/vnd.com.citrix.netscaler.lbvserver_servicegroup_binding+json'}
     data = {"lbvserver_servicegroup_binding":{"servicegroupname":servicegroup,"name":lbvserver}}
     response = requests.post(url, headers=headers, data=json.dumps(data))
+    if response.status_code == 200 or response.status_code == 201:
+        slack_channel = app.config['SLACK_RELEASE_CHANNEL_ID']
+        slack_message = 'Success: ' + lbvserver + ' bound to ' + servicegroup + ' on ' + nsname + ' by ' + session['ns_user']
+        slack.send_message(slack_channel,slack_message)
     message = response.status_code
     return message
 
@@ -62,6 +66,10 @@ def ns_lb_svcg_unbind(nsname, lbvserver, servicegroup, AuthToken):
     url = 'https://' + nsname + '/nitro/v1/config/lbvserver_servicegroup_binding/' + lbvserver + '?args=servicegroupname:' + servicegroup
     headers = {'Cookie':token}
     response = requests.delete(url, headers=headers)
+    if response.status_code == 200 or response.status_code == 201:
+        slack_channel = app.config['SLACK_RELEASE_CHANNEL_ID']
+        slack_message = 'Success: ' + lbvserver + ' unbound from ' + servicegroup + ' on ' + nsname + ' by ' + session['ns_user']
+        slack.send_message(slack_channel,slack_message)
     message = response.status_code
     return message
 
