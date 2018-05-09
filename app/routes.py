@@ -409,8 +409,8 @@ def _flips():
             elif sidein == 'B':
                 bindsvcghttp = ns.ns_lb_svcg_bind(session['ns_name'], app.config['PVT_VS_HTTP'], app.config['PVT_SIDE_A_HTTP'], session['ns_auth_token'])
                 unbindsvcghttp = ns.ns_lb_svcg_unbind(session['ns_name'], app.config['PVT_VS_HTTP'], app.config['PVT_SIDE_B_HTTP'], session['ns_auth_token'] )
-                bindsvcgapi = ns.ns_lb_svcg_bind(session['ns_name'], app.config['PUB_VS_API'], app.config['PUB_SIDE_A_API'], session['ns_auth_token'])
-                unbindsvcgapi = ns.ns_lb_svcg_unbind(session['ns_name'], app.config['PUB_VS_API'], app.config['PUB_SIDE_B_API'], session['ns_auth_token'] )
+                bindsvcgapi = ns.ns_lb_svcg_bind(session['ns_name'], app.config['PVT_VS_API'], app.config['PVT_SIDE_A_API'], session['ns_auth_token'])
+                unbindsvcgapi = ns.ns_lb_svcg_unbind(session['ns_name'], app.config['PVT_VS_API'], app.config['PVT_SIDE_B_API'], session['ns_auth_token'] )
                 bindstagesvcghttp = ns.ns_lb_svcg_bind(session['ns_name'], app.config['PVT_STG_HTTP'], app.config['PVT_SIDE_B_HTTP'], session['ns_auth_token'])
                 unbindstagesvcghttp = ns.ns_lb_svcg_unbind(session['ns_name'], app.config['PVT_STG_HTTP'], app.config['PVT_SIDE_A_HTTP'], session['ns_auth_token'] )
                 bindstagesvcgapi = ns.ns_lb_svcg_bind(session['ns_name'], app.config['PVT_STG_API'], app.config['PVT_SIDE_B_API'], session['ns_auth_token'])
