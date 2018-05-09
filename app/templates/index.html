@@ -248,24 +248,24 @@
                 }
 
         });
-        $.ajax({
-           url: '/_netattacks',
-           type: 'POST',
-           success: function(response) {
-               if (response['attack_count'] == 0) {
-                 $('#NetworkAttackCountDiv').html('<div class="card w-75 text-center text-white bg-success mb-3" style="max-width: 10rem;"><div class="card-body"><h6 class="card-title">Network Attacks Last 30 Days</h6><h5 id="NetworkAttackCount" class="card-subtitle text-center text-white mb-2"></h5></div></div>');
-                 $('#NetworkAttackCount').text(response['attack_count']);
-               } else if (response['attack_count'] > 0) {
-                 $('#NetworkAttackCountDiv').html('<div class="card w-75 text-center text-white bg-primary mb-3" style="max-width: 10rem;"><div class="card-body"><h6 class="card-title">Network Attacks Last 30 Days</h6><h5 id="NetworkAttackCount" class="card-subtitle text-center text-white mb-2"></h5></div></div>');
-                 $('#NetworkAttackCount').text(response['attack_count']);
-               }
-                 },
-               error: function() {
-                   console.log('something went wrong');
-               }
-
-        });
       }
       setInterval('autoRefresh_stg()', 5000);
+      $.ajax({
+         url: '/_netattacks',
+         type: 'POST',
+         success: function(response) {
+             if (response['attack_count'] == 0) {
+               $('#NetworkAttackCountDiv').html('<div class="card w-75 text-center text-white bg-success mb-3" style="max-width: 10rem;"><div class="card-body"><h6 class="card-title">Network Attacks Last 30 Days</h6><h5 id="NetworkAttackCount" class="card-subtitle text-center text-white mb-2"></h5></div></div>');
+               $('#NetworkAttackCount').text(response['attack_count']);
+             } else if (response['attack_count'] > 0) {
+               $('#NetworkAttackCountDiv').html('<div class="card w-75 text-center text-white bg-primary mb-3" style="max-width: 10rem;"><div class="card-body"><h6 class="card-title">Network Attacks Last 30 Days</h6><h5 id="NetworkAttackCount" class="card-subtitle text-center text-white mb-2"></h5></div></div>');
+               $('#NetworkAttackCount').text(response['attack_count']);
+             }
+               },
+             error: function() {
+                 console.log('something went wrong');
+             }
+
+      });
  </script>
 {% endblock %}
