@@ -4,6 +4,7 @@ from app import emails
 from app import nsfunctions as ns
 from app import nafunctions as na
 from app import winfunctions as win
+from app import kscfunctions as ksc
 from app.forms import LoginForm, OutageForm, ReportForm, NSForm, EmailReportForm
 from app.models import Outage
 from functools import wraps
@@ -112,6 +113,12 @@ def _winfailupdcnt():
         servers_failed_updates_count = win.servers_failed_updates()
         return jsonify({'servers_failed_updates_count':servers_failed_updates_count})
 
+@app.route('/_netattacks', methods=['POST'])
+def _netattacks():
+    attack_count = ksc.kscnetattackreport()
+    return jsonify({'attack_count':attack_count})
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -194,53 +201,6 @@ def _currentbindings():
         logout_result = ns.nslogout(ns_name, session['read_token'])
         return jsonify({'message': "Something went wrong..."})
     logout_result = ns.nslogout(ns_name, session['read_token'])
-
-
-@app.route('/_flip', methods=['POST'])
-@login_required
-def flip_side():
-    if request.form['text'] == 'Flip Private Web':
-        results = ns.bindings(session['ns_name'], session['ns_auth_token'])
-        for result in results:
-            if result['vs'] == 'pvt_web':
-                response = 'Updated to ' + result['svcg']
-                svcg = result['svcg']
-        return jsonify({'text': response, 'svcg': svcg})
-    elif request.form['text'] == 'Flip Public Web':
-        results = ns.bindings(session['ns_name'], session['ns_auth_token'])
-        for result in results:
-            if result['vs'] == 'pub_web':
-                response = 'Updated to ' + result['svcg']
-                svcg = result['svcg']
-        return jsonify({'text': response, 'svcg': svcg})
-    elif request.form['text'] == 'Flip Beta Web':
-        sideincheck = ns.bindings(session['ns_name'], session['ns_auth_token'])
-        for servicegroup in sideincheck:
-            if servicegroup['vs'] == 'beta_web':
-                sidein = servicegroup['svcg']
-        if sidein == 'A':
-            bindsvcg = ns.ns_lb_svcg_bind(session['ns_name'], app.config['BETA_VS_API'], app.config['BETA_SIDE_B_API'], session['ns_auth_token'])
-            unbindsvcg = ns.ns_lb_svcg_unbind(session['ns_name'], app.config['BETA_VS_API'], app.config['BETA_SIDE_A_API'], session['ns_auth_token'] )
-            results = ns.bindings(session['ns_name'], session['ns_auth_token'])
-            for result in results:
-                if result['vs'] == 'beta_web':
-                    response =  'Updated to Side ' + result['svcg']
-                    svcg = result['svcg']
-            return jsonify({'text': response, 'svcg': svcg })
-        elif sidein == 'B':
-            bindsvcg = ns.ns_lb_svcg_bind(session['ns_name'], app.config['BETA_VS_API'], app.config['BETA_SIDE_A_API'], session['ns_auth_token'])
-            unbindsvcg = ns.ns_lb_svcg_unbind(session['ns_name'], app.config['BETA_VS_API'], app.config['BETA_SIDE_B_API'], session['ns_auth_token'] )
-            results = ns.bindings(session['ns_name'], session['ns_auth_token'])
-            for result in results:
-                if result['vs'] == 'beta_web':
-                    response =  'Updated to Side ' + result['svcg']
-                    svcg = result['svcg']
-            return jsonify({'text': response, 'svcg': svcg })
-        else:
-            return jsonify({'text': 'Binding Failure', 'svcg': '?'})
-    else:
-        return jsonify({'text': 'Did not match Input', 'svcg': '?'})
-
 
 @app.route('/logout')
 @login_required
