@@ -4,9 +4,12 @@ from bs4 import BeautifulSoup
 from flask import jsonify
 import os
 import json
+import time
+import requests
 
 
 def kscnetattackreport():
+    t = time.process_time()
     html = urlopen('http://ohucsvcenter.realtracs.net/_netattacks.html')
     bsObj = BeautifulSoup(html.read(),'html.parser')
     table = bsObj.find_all('table',{'id':'Details'})[0]
@@ -17,17 +20,28 @@ def kscnetattackreport():
 
     try:
         for row in rows:
-            attackCount += 1
             attackRow = dict()
             cellIndex = 0
             for cell in row.find_all('td'):
                 attackRow[attackRowHeader[cellIndex]] = cell.get_text()
                 cellIndex += 1
-            if cellIndex > 0:
+            if attackCount > 0:
                 attackDetail.append(attackRow)
+            attackCount += 1
     finally:
         print(attackCount)
         attackDetailJSON = json.dumps(attackDetail)
         with open('netattacks.txt', 'w') as outfile:
             outfile.write(attackDetailJSON)
+        tt = time.process_time() - t
+        print(tt)
         return attackCount
+
+def kscattakerip():
+    infile = open('netattacks.txt','r',encoding='utf-8')
+    attacksList = jsonloads(infile.read())
+    pass
+
+def ip_to_country(ip):
+    url = 'http://api.ipinfodb.com/v3/ip-country/?key=' + app.config('IPINFODB_API_KEY') + '&ip=' + ip
+    pass

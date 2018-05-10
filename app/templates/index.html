@@ -168,7 +168,7 @@
                    $('#volCountDiv').html('<div class="card w-75 text-center text-white bg-success mb-3" style="max-width: 10rem;"><div class="card-body"><h6 class="card-title">Healthy Volumes Total</h6><h5 id="volCount" class="card-subtitle text-center text-white mb-2"></h5></div></div>');
                    $('#volCount').text(response['total_volume_count']);
                  } else if (response['warning_volume_count'] > 0) {
-                   $('#volCountDiv').html('<div class="card w-75 text-center text-white bg-warning mb-3" style="max-width: 10rem;"><div class="card-body"><h6 class="card-title">Volumes Over 90%</h6><h5 id="volCount" class="card-subtitle text-center text-white mb-2"></h5></div></div>');
+                   $('#volCountDiv').html('<div class="card w-75 text-center text-white bg-warning mb-3" style="max-width: 10rem;"><div class="card-body"><h6 class="card-title">Volumes Over 90%</h6><h5 id="volCount" class="card-subtitle text-center text-white mb-2"><span id="" class="badge badge-light"></span></h5></div></div>');
                    $('#volCount').text(response['warning_volume_count']);
                  }
 
