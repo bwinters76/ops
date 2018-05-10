@@ -14,6 +14,10 @@ class Outage(db.Model):
     ocategory = db.Column(db.String(1), index=True, default='U')
     oreason = db.Column(db.String(1024))
 
-
     def __repr__(self):
         return '<oservice {}>'.format(self.oservice)
+
+class IPinfo(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    ipaddress = db.Column(db.String(15), index=True)
+    origincountry = db.Column(db.String(128), index=True)
