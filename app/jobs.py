@@ -69,4 +69,4 @@ def populate_ip_country():
         sleep(1)
         print('waking')
     db.session.commit()
-    pass 
+    pass
