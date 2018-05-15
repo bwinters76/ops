@@ -51,7 +51,7 @@ def kscnetattackscrape():
 def ip_to_country(ip):
     url = 'http://api.ipinfodb.com/v3/ip-country/?key=' + app.config['IPINFODB_API_KEY'] + '&ip=' + ip + '&format=json'
     response =requests.get(url)
-    print(response)
+    print(response.status_code + ' ' + response.text)
     json_data = response.json()
     country = json_data['countryName']
     return json_data
@@ -59,6 +59,7 @@ def ip_to_country(ip):
 def populate_ip_country():
     unknown_ip_origin = IPinfo.query.filter_by(countryname=None)
     for ip in unknown_ip_origin:
+        print(ip.ipaddress,ip.countrycode, ip.countryname)
         json_data = ip_to_country(ip.ipaddress)
         print('writing'+json_data['countryName']+json_data['countryCode'])
         ip.countryname = json_data['countryName']
@@ -67,3 +68,5 @@ def populate_ip_country():
         print('sleeping')
         sleep(1)
         print('waking')
+    db.session.commit()
+    pass
