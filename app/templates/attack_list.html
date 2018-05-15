@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+
+
+  <h1>Attacks by Country of Origin</h1>
+  <hr>
+  <div class="chart-container" style="position: relative; height:80vh; width:90vw">
+    <canvas id="chart"></canvas>
+  </div>
+
+    <script>
+      var ctx = document.getElementById("chart").getContext('2d');
+      var data = {
+            datasets: [{
+              data: {{values}},
+              backgroundColor: {{colors|tojson|safe}}
+            }],
+
+
+        // These labels appear in the legend and in the tooltips when hovering different arcs
+        labels: {{labels|tojson|safe}},
+      };
+
+      var options = {
+        options: {
+            responsive: true
+        }
+      };
+
+      // For a pie chart
+      var myPieChart = new Chart(ctx,{
+          type: 'pie',
+          data: data,
+          options: options
+      });
+    </script>
+
+{% endblock %}

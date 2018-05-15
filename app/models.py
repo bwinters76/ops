@@ -20,4 +20,8 @@ class Outage(db.Model):
 class IPinfo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     ipaddress = db.Column(db.String(15), index=True)
-    origincountry = db.Column(db.String(128), index=True)
+    countryname = db.Column(db.String(128), index=True)
+    countrycode = db.Column(db.String(3), index=True)
+
+    def __repr__(self):
+        return '<ipaddress {}>'.format(self.ipaddress)

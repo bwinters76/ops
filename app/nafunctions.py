@@ -27,7 +27,6 @@ def warning_volumes_count():
     for controller in controller_data:
         for count in controller['Counts']:
             warning_volume_count += count['WarningVolumeCount']
-
     return warning_volume_count
 
 def total_volumes_count():
@@ -36,11 +35,10 @@ def total_volumes_count():
     for controller in controller_data:
         for count in controller['Counts']:
             total_volume_count += count['AllVolumeCount']
-
     return total_volume_count
 
 def warning_cluster_peer_counts():
-    warning_cluster_peer_count = 0 
+    warning_cluster_peer_count = 0
     controller_data = load_file()
     for controller in controller_data:
         for count in controller['Counts']:

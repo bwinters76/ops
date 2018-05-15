@@ -6,7 +6,7 @@ from app import nafunctions as na
 from app import winfunctions as win
 from app import kscfunctions as ksc
 from app.forms import LoginForm, OutageForm, ReportForm, NSForm, EmailReportForm
-from app.models import Outage
+from app.models import Outage, IPinfo
 from functools import wraps
 from app import uptime
 from app import slackfunctions as slack
@@ -115,7 +115,7 @@ def _winfailupdcnt():
 
 @app.route('/_netattacks', methods=['POST'])
 def _netattacks():
-    attack_count = ksc.kscnetattackreport()
+    attack_count = ksc.kscnetattackcount()
     return jsonify({'attack_count':attack_count})
 
 
@@ -251,6 +251,19 @@ def outage_record():
 def outage_list():
     outages = Outage.query.order_by(Outage.oservice.desc(), Outage.odate.desc()).all()
     return render_template('outage_list.html', title = 'List of Outages', services = ['.net','.com','email'], outages=outages)
+
+@app.route('/attack_list', methods=['GET'])
+def attack_list():
+    attacks = IPinfo.query.order_by(IPinfo.countrycode.asc()).all()
+    attack_countries = IPinfo.query.with_entities(IPinfo.countryname).distinct()
+    labels = []
+    values = []
+    colors = ["#007BFF","#F7464A", "#46BFBD", "#FDB45C", "#FEDCBA","#ABCDEF", "#343A40", "#ABCABC","#6C757D","#E83E8C","#6F42C1","#17A2B8","#20C997","#FFC107","#FD7E14"]
+    for country in attack_countries:
+        labels.append(country.countryname)
+        values.append(IPinfo.query.filter_by(countryname=country.countryname).count())
+
+    return render_template('attack_list.html', title='List of Attacks', values=values, labels=labels,colors=colors, attacks=attacks)
 
 @app.route('/uptimes')
 def uptimes():

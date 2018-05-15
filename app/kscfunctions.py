@@ -7,6 +7,18 @@ import json
 import time
 import requests
 
+def ksc_load_file():
+    infile = open('netattacks.txt', 'r', encoding='utf-8')
+    raw_file_data = infile.read()
+    attack_data = json.loads(raw_file_data)
+    return attack_data
+
+def kscnetattackcount():
+    attack_count = 0
+    attack_data = ksc_load_file()
+    for attack in attack_data:
+        attack_count += 1
+    return attack_count
 
 def kscnetattackreport():
     t = time.process_time()

@@ -8,6 +8,9 @@ from flask_migrate import Migrate
 from flask_bootstrap import Bootstrap
 from flask_mail import Mail
 from slackclient import SlackClient
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.interval import IntervalTrigger
+import atexit
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -16,10 +19,28 @@ migrate = Migrate(app, db)
 Bootstrap(app)
 mail = Mail(app)
 slack_client = SlackClient(app.config['SLACK_TOKEN'])
+scheduler = BackgroundScheduler()
 
 from app import routes, models
 from app import nsfunctions
 from app import slackfunctions
+from app import jobs
+
+scheduler.add_job(
+    func=jobs.kscnetattackscrape,
+    trigger=IntervalTrigger(seconds=60),
+    id='ksc_scraping_job',
+    name='Scrape network attacks every hour',
+    replace_existing=True)
+scheduler.add_job(
+    func=jobs.populate_ip_country,
+    trigger=IntervalTrigger(seconds=90),
+    id='ip_to_country_lookup_job',
+    name='store origin country in DB',
+    replace_existing=True)
+scheduler.start()
+
+atexit.register(lambda: scheduler.shutdown())
 
 if not app.debug:
     if app.config['MAIL_SERVER']:
